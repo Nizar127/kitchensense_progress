@@ -19,10 +19,13 @@ export default class MyOrderDetail extends Component {
             salary: null,
             peoplenum: null,
             chosenDate: null,
-            lat: 0,
-            lng: 0,
-            worktype: null,
-            location: { description: '' },
+            ingredientname:null,
+                ingredientDesc:null,
+                quantity:null,
+                date_bought:null,
+                expiry_Date:null,
+                ExpiryReceived:null,
+                alert:null, 
             url: null,
             dynamicAddress: [],
             item: {},
@@ -32,21 +35,19 @@ export default class MyOrderDetail extends Component {
     }
 
     componentDidMount() {
-        const detailRef = firestore.collection('Job_list').doc(this.props.route.params.userkey);
+        const detailRef = firestore.collection('IngredientList').doc(this.props.route.params.userkey);
         detailRef.get().then((res) => {
             if (res.exists) {
                 const job = res.data();
                 this.setState({
                     key: res.id,
-                    jobname: job.jobname,
-                    jobCreatorName: job.jobCreatorName,
-                    jobdesc: job.jobdesc,
-                    salary: job.salary,
-                    peoplenum: job.peoplenum,
-                    worktype: job.worktype,
-                    experience: job.experience,
-                    uniqueId: job.uniqueId,
-                    qualification: job.qualification,
+                    ingredientname: job.ingredientname,
+                    ingredientDesc: job.ingredientDesc,
+                    quantity: job.quantity,
+                    date_bought: job.date_bought,
+                    expiry_Date: job.expiry_Date,
+                    ExpiryReceived: job.ExpiryReceived,
+                    alert: job.alert, 
                     url: job.url
                 });
                 console.log("state", this.state)
@@ -57,9 +58,101 @@ export default class MyOrderDetail extends Component {
     }
 
 
+    
     setUniqueId = (value) => {
         this.setState({ uniqueId: value });
     }
+
+    updateIngredient() {
+        this.setState({
+          isLoading: true,
+        });
+        const updateDBRef = firestore.collection('IngredientList').doc(this.state.key);
+        updateDBRef.set({
+            ingredientname: this.state.ingredientname,
+                ingredientDesc: this.state.ingredientDesc,
+                quantity: this.state.quantity,
+                date_bought: this.state.date_bought,
+                expiry_Date: this.state.expiry_Date,
+                ExpiryReceived: this.state.ExpiryReceived,
+                alert: this.state.alert, 
+                url: this.state.url,
+
+        }).then((docRef) => {
+          this.setState({
+            key: '',
+            ingredientname:'',
+                ingredientDesc:'',
+                quantity:'',
+                date_bought:'',
+                expiry_Date:'',
+                ExpiryReceived:'',
+                alert:'', 
+                url:'',
+
+            isLoading: false,
+          });
+          try{
+
+            if(quantity === this.state.alert){
+                firestore.collection('Users').doc(auth.currentUser.uid).get().then((snapshot) =>{
+                    snapshot.foreach((childSnapshot) =>{
+                        var expotoken = childSnapshot.val().expoToken;
+                        let response = fetch('https://exp.host/--/api/v2/push/send',
+                         {
+                            method: 'POST',
+                            headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify
+                            ({
+                                to: expotoken,
+                                sound: 'default',
+                                title: 'Kitchen Sense',
+                                body: 'This item has been in Low Quantity.'
+                            })
+                        });
+                    })
+                })
+                
+            }
+        }catch(error){
+            console.log(error)
+        }
+
+          this.props.navigation.navigate('MyOrderDetail');
+
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+          this.setState({
+            isLoading: false,
+          });
+        });
+      }
+    
+      deleteUser() {
+        const deleteRef = firestore.collection('IngredientList').doc(this.props.route.params.userkey)
+          deleteRef.delete().then((res) => {
+              console.log('Item removed from database')
+              this.props.navigation.navigate('MyOrderDetailn');
+          })
+      }
+    
+      openAlert=()=>{
+        Alert.alert(
+          'Delete Item',
+          'Are you sure?',
+          [
+            {text: 'Yes', onPress: () => this.deleteUser()},
+            {text: 'No', onPress: () => console.log('No item was removed'), style: 'cancel'},
+          ],
+          { 
+            cancelable: true 
+          }
+        );
+        }
 
     render() {
         return (

@@ -7,10 +7,17 @@ import {auth, firestore, db, storage} from '../config/Firebase';
 /* import ImagePicker from 'react-native-image-crop-picker';*/
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'react-native-uuid';
+import {useRoute} from '@react-navigation/native';
+
+export default function(props) {
+  const route = useRoute();
+
+  return <SignUp {...props} route={route} />;
+}
 
 
 
-export default class SignUp extends Component {
+ class SignUp extends Component {
   
     constructor() {
         super();
@@ -37,6 +44,9 @@ export default class SignUp extends Component {
 
 
     }
+
+
+
 
     _maybeRenderUploadingOverlay = () => {
         if (this.state.uploading) {
@@ -118,6 +128,8 @@ export default class SignUp extends Component {
         }
       };
 
+
+
 pickImage = async() => {
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -158,52 +170,57 @@ setAddress = (value) => {
 
 
 saveData = async() => {
-    console.log("state", this.state)
-    if (this.state.description && this.state.address && this.state.fullname && this.state.email && this.state.password  && this.state.phoneNum  && this.state.url) {
-        if (this.state.password.length < 6){
-            Alert.alert('Status', 'Invalid Figure!');
-            
-        }
-        else {
-            await auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then(doc => {
-                return firestore.collection("Users").doc(doc.user.uid).set({
-                    email: this.state.email,
-                    fullname: this.state.fullname,
-                    description: this.state.description,
-                    address: this.state.address,
-                    phoneNum: this.state.phoneNum,
-                    url: this.state.url,
-                }).then((res) => {
-                    this.setState({
-                        email: '',
-                        fullname:'',
-                        password:'',
-                        address: '',
-                        description:'',
-                        phoneNum:'',
-                        url: '',
+  console.log("state", this.state)
+  const {route} = this.props;
+  if (this.state.description && route.params.userAddress && this.state.fullname && this.state.email && this.state.password  && this.state.phoneNum  && this.state.url) {
+      if (this.state.password.length < 6){
+          Alert.alert('Status', 'Invalid Figure!');
           
-                    });
-                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
-                    [
-                        {
-                            text: "Thank You For Signin Up With Traffic (Employer). Please Sign In to proceed",
-                            onPress: () => this.props.navigation.navigate('Login')
-                        },
-                    ], { cancelable: false }
-                );
-                })
-            })
+      }
+      else {
+          await auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .then(doc => {
+              return firestore.collection("Users").doc(doc.user.uid).set({
+                  email: this.state.email,
+                  fullname: this.state.fullname,
+                  description: this.state.description,
+                  address: route.params.userAddress,
+                  phoneNum: this.state.phoneNum,
+                  url: this.state.url,
+                  //created: firebase.firestore.FieldValue.serverTimestamp()
+              }).then((res) => {
+                  this.setState({
+                      email: '',
+                      fullname:'',
+                      password:'',
+                      address: '',
+                      description:'',
+                      phoneNum:'',
+                      url: '',
+        
+                  });
+                  Alert.alert('Your Account Has Been Creatd', 'Please Choose',
+                  [
+                      {
+                          text: "Thank You For Signin Up With Kitchen Sense. Please Sign In to proceed",
+                          onPress: () => this.props.navigation.navigate('Login')
+                      },
+                  ], { cancelable: false }
+              );
+              })
+          })
 
-        }
-    } else {
-        Alert.alert('Status', 'Empty Field(s)!');
-    }
+      }
+  } else {
+      Alert.alert('Status', 'Empty Field(s)!');
+  }
 }
 
 
+
   render() {
+    const {route} = this.props;
+
     let { url } = this.state;
 
     return (
@@ -258,14 +275,22 @@ saveData = async() => {
                  <Textarea rowSpan={5} style={styles.startRouteBtn} onChangeText={this.setDescription} />
             </Item>
 
-            <Item style={styles.inputGroup} fixedLabel last>
-               <Label>Address</Label>
-               
-            </Item>
+            <View style={{ flex: 1,flexDirection:'column'}}>
+             
+             <Item style={styles.inputGroup} fixedLabel last>
+                 <View style={{flex: 1, flexDirection:'column'}}>
+                 <Label>Address</Label>
+                 <View style={{margin: 10}}><Text>{route.params.userAddress}</Text></View> 
+               </View>
+ 
+                          
+                 
+             </Item>
+             {/* <Button success style={{ marginTop: 10}} onPress={(address) => this.setDisplayCurrentAddress(address)}>
+                                     <Text>Check Location</Text>
+                                 </Button> */}
+           </View>
 
-            <Item fixedLabel last>
-                 <Textarea rowSpan={5} style={styles.startRouteBtn} onChangeText={this.setAddress} />
-            </Item>
 
 
            <Item style={styles.inputGroup} fixedLabel last>

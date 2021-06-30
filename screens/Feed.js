@@ -28,6 +28,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView } from 'react-native-gesture-handler';
 import {auth, firestore, storage} from '../config/Firebase';
 import { KeyboardAvoidingViewBase } from 'react-native';
+import * as Notifications from 'expo-notifications';
+
 
 
 export default class Home extends Component {
@@ -75,30 +77,81 @@ export default class Home extends Component {
 
 
 
-
     componentDidMount() {
         this.feedRef = firestore.collection('IngredientList');
         this.unsubscribe = this.feedRef.onSnapshot(this.getCollection);
-
+        //this.currentUser = await auth.currentUser;
+      //  await this.registerForPushNotificationsAsync();
 
     } 
-/*     componentDidMount() {
-        this.unsubscribe = firestore.collection('IngredientList').doc(auth.currentUser.uid).onSnapshot(doc => {
+
+    sendPushNotificationOnQty = () => {
+        let lowqty = firestore.collection('Ingredient').doc().onSnapshot(doc=>{
+            //console.log(doc);
+            const{quantity} = doc.data();
+            this.setState({quantity})
+            console.log("qty",doc)
+            //itemname = item.itemname;
+        })
+
+        // this is for sending notification if quanity low than 100
+        try{
+
+            if(lowqty === "100"){
+                firestore.collection('Users').doc(auth.currentUser.uid).get().then((snapshot) =>{
+                    snapshot.foreach((childSnapshot) =>{
+                        var expotoken = childSnapshot.val().expoToken;
+                        let response = fetch('https://exp.host/--/api/v2/push/send',
+                         {
+                            method: 'POST',
+                            headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify
+                            ({
+                                to: expotoken,
+                                sound: 'default',
+                                title: 'Kitchen Sense',
+                                body: 'This item has been in Low Quantity.'
+                            })
+                        });
+                    })
+                })
+                
+            }
+        }catch(error){
+            console.log(error)
+        }
+
+        //for  receiving expiry date 
+
+        //expiring after 3 days
+        const trigger = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) ;
+        trigger.setMinutes(0);
+        trigger.setSeconds(0);
+        
+        //get item name
+        let item = firestore.collection('Ingredient').doc().onSnapshot(doc=>{
             console.log(doc);
-            const { url, date_bought, ingredientname, ingredientDesc, ExpiryReceived, alert, quantity} = doc.data();
-            this.setState({
-                email,
-                fullname,
-                description,
-                phoneNum,
-                url,
-                address,
-            })
-            console.log("doc", doc)
-        });
-      
-        //this.unsubscribe = firebase.firestore().collection('Users').onSnapshot(this.getCollection);
-    } */
+            const{itemname} = doc.data();
+            this.setState({itemname})
+            console.log(JSON.stringify(doc))
+            //itemname = item.itemname;
+        })
+        
+        Notifications.scheduleNotificationAsync({
+            content: {
+              title: ''+item,
+              body: "The Item Will Expired In 3 Days",
+            },
+            trigger,
+          }); 
+           
+      };
+
+
+     
 
     componentWillUnmount() {
         this.unsubscribe();

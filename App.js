@@ -31,6 +31,8 @@ import AccountDetail from './screens/AccountDetail';
 import AddUserLocation from './location/adduserlocation';
 import Planner from './screens/planner';
 import PlanLocation from './location/PlanLocation';
+import TestPlan from './screens/testplan';
+import Timestamptest from './screens/timestamptest';
 
 function App() {
 
@@ -60,6 +62,9 @@ function App() {
         <Stack.Screen name="AddUserLocation" component={AddUserLocation}/>
         <Stack.Screen name="Planner" component={Planner}/>
         <Stack.Screen name="PlanLocation" component={PlanLocation}/>
+        <Stack.Screen name="TestPlan" component={TestPlan} />
+        <Stack.Screen name="Timestamptest" component={Timestamptest} />
+
 
 
       </Stack.Navigator>

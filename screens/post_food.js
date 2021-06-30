@@ -73,7 +73,9 @@ export default class PostFood extends Component {
             isLoading: false,
             uploading: false,
             DateDisplay:'',
+            ExpiryDateDisplay:'',
             visibility: false,
+            visibilityExpiry:false,
             switchValue: '',
            metric: [
                 { gram: 'Kilogram', id: 1 },
@@ -120,6 +122,7 @@ export default class PostFood extends Component {
       }
 
 
+      //set date time picker for when to buy
     handleConfirm=(date)=>{
         this.setState({DateDisplay:date.toUTCString()})
     }
@@ -132,35 +135,19 @@ export default class PostFood extends Component {
         this.setState({visibility:true})
     }
 
+          //set date time picker for when to buy
+          handleConfirmExpiration=(date)=>{
+            this.setState({ExpiryDateDisplay:date.toUTCString()})
+        }
+    
+        onPressCancelExpiration = () => {
+            this.setState({visibilityExpiry:false})
+        }
+    
+        onPressButtonClickExpiration = () => {
+            this.setState({visibilityExpiry:true})
+        }
 
-    showActionSheet = () => {
-        this.ActionSheet.show()
-    }
-
-    showActionSheetalert = () => {
-        this.ActionSheet.show()
-    }
-
-      handlePressalert = buttonIndex => {
-        this.setState({
-          selected: buttonIndex,
-          alert: alert[buttonIndex]
-          
-        });
-        console.log('actionsheet5',buttonIndex);
-
-      };
-
-
-      handlePressQuantity = buttonIndex => {
-        this.setState({
-          selected: buttonIndex,
-          alert: quantity[buttonIndex]
-          
-        });
-        console.log('actionsheet10',buttonIndex);
-
-      };
 
  
     toggleView = () => {
@@ -339,7 +326,7 @@ export default class PostFood extends Component {
 
     saveData = async() => {
         console.log("state", this.state)
-        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.DateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
+        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.DateDisplay && this.state.ExpiryDateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
             if (isNaN(this.state.quantity)) {
                 Alert.alert('Status', 'Invalid Figure!');
             }
@@ -352,6 +339,7 @@ export default class PostFood extends Component {
                         ingredientDesc: this.state.ingredientDesc,
                         quantity: this.state.quantity,
                         date_bought: this.state.DateDisplay,
+                        expiry_Date: this.state.ExpiryDateDisplay, 
                         ExpiryReceived: this.state.switchValue,
                         alert: this.state.alert,
                         url: this.state.url,
@@ -365,6 +353,7 @@ export default class PostFood extends Component {
                             ingredientDesc: '',
                             quantity: '',
                             date_bought:'',
+                            expiry_Date:'',
                             ExpiryReceived:'',
                             url: '',
                             alert:'',
@@ -376,12 +365,8 @@ export default class PostFood extends Component {
                         [
                             {
                                 text: "Return To Main Screen",
-                                onPress: () => this.props.navigation.navigate('Feed')
+                                onPress: () => this.props.navigation.navigate('Home')
                             },
-                            {
-                                text: "View Current Job Posted",
-                                onPress: () => this.props.navigation.navigate('MyJob')
-                            }
                         ], { cancelable: false }
                     );
            // })
@@ -412,7 +397,7 @@ export default class PostFood extends Component {
                     </Item>
 
                     <View style={styles.inputGroup} fixedLabel last>
-                            <Label>Job Description</Label>
+                            <Label>Item Description</Label>
                         </View>
                         <Item>
                             <Textarea rowSpan={5} colSpan={5} onChangeText={this.setIngredientDesc} bordered style={styles.startTextBtn} placeholder="Tell something about the job Here" />
@@ -435,7 +420,27 @@ export default class PostFood extends Component {
                         <Text style={{padding: 2, margin:5}}>{this.state.DateDisplay} </Text>
                     </View>
 
-                    </Item>
+                </Item>
+
+
+                <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClickExpiration}>
+                    <DateTimePickerModal
+                        isVisible={this.state.visibility}
+                        onConfirm={this.handleConfirmExpiration}
+                        onCancel={this.onPressCancelExpiration}
+                        mode="datetime"
+                    />
+                    <View style={{flex:1, flexDirection:'column'}}>
+                       <View style={{flex:1, flexDirection:'row'}}>
+                         <Text style={{fontWeight: "bold", fontSize: 15}}>
+                               Expiration Date:                
+                         </Text>
+                                    <Icon name="md-calendar" />
+                        </View>
+                        <Text style={{padding: 2, margin:5}}>{this.state.ExpiryDateDisplay} </Text>
+                    </View>
+
+                </Item>
                         <Item style={styles.inputGroup} fixedLabel last>
                             <Label>Receive Expiry Alert Before 3 days before</Label>
                             <Switch  

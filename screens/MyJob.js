@@ -10,7 +10,7 @@ import {auth, firestore, storage,db} from '../config/Firebase';
 export default class MyJob extends Component {
     constructor() {
         super();
-        this.applicationRef = firestore.collection('Job_list').where('uid', '==', auth.currentUser.uid);
+        //this.applicationRef = firestore.collection('IngredientList').where('uid', '==', auth.currentUser.uid);
         this.state = {
             isLoading: true,
             jobs: []
@@ -21,6 +21,7 @@ export default class MyJob extends Component {
 
 
     componentDidMount() {
+        this.applicationRef = firestore.collection('IngredientList').where('uid', '==', auth.currentUser.uid);
         this.unsubscribe = this.applicationRef.onSnapshot(this.getCollection);
         // job.on('value', (snapshot) => {
         //   let data = snapshot.val();
@@ -40,18 +41,28 @@ export default class MyJob extends Component {
     getCollection = (querySnapshot) => {
         const jobs = [];
         querySnapshot.forEach((res) => {
-            const { jobname, uniqueId, jobdesc, worktype, salary, peoplenum, chosenDate, location } = res.data();
+            const {            
+                uid,     
+                ingredientname,
+                ingredientDesc,
+                quantity,
+                date_bought,
+                expiry_Date,
+                ExpiryReceived,
+                alert, 
+                url} = res.data();
             jobs.push({
                 key: res.id,
                 res,
-                jobname,
-                uniqueId,
-                jobdesc,
-                worktype,
-                salary,
-                peoplenum,
-                chosenDate,
-                location
+                uid,
+                ingredientname,
+                ingredientDesc,
+                quantity,
+                date_bought,
+                expiry_Date,
+                ExpiryReceived,
+                alert, 
+                url
             });
         });
         this.setState({
