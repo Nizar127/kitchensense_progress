@@ -33,10 +33,10 @@ console.disableYellowBox = true;
  export default function(props) {
     const route = useRoute();
   
-    return <ListAccount {...props} route={route} />;
+    return <Household {...props} route={route} />;
   }  
   
- class ListAccount extends Component {
+ class Household extends Component {
 
     constructor() {
         super();
@@ -171,7 +171,7 @@ console.disableYellowBox = true;
                             <Card>
                             <Content>
                                 <View>
-                                    <Text style={{ flex: 1, fontSize: 15, textAlign: 'center', margin: 5}}>dsManage Your Household</Text>
+                                    <Text style={{ flex: 1, fontSize: 15, textAlign: 'center', margin: 5}}>Manage Your Household</Text>
                                 </View>
 
                                 <View style={{margin: 10}}>
@@ -180,7 +180,7 @@ console.disableYellowBox = true;
                                        <Left>
                                            <Icon name="md-location"/>
                                        </Left>
-                                        <Text style={{ flex: 1, fontSize: 15, textAlign: 'center', margin: 5}}>{route.params.myaddress}</Text>
+                                        <Text style={{ flex: 1, fontSize: 15,  margin: 5}}>{route.params.myaddress}</Text>
 
                                     </View>
                                     <Text note style={{ flex: 1, fontSize: 15, textAlign: 'center', margin: 5}}>You can add or remove user</Text>

@@ -17,91 +17,78 @@ import {
     Thumbnail,
     Text,
     Icon,
-    Picker,
-    Badge,
+    Picker,    
     DatePicker,
     Footer,
     FooterTab,
     Button,
     Textarea
 } from 'native-base';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {db, auth, storage, firestore} from '../config/Firebase';
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'react-native-uuid';
-import ActionSheet from 'react-native-actionsheet'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useRoute } from '@react-navigation/native';
 
-
-const quantity = [
-    'Cancel',
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Kilogram</Text>,
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Gram</Text>,
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Miligram</Text>,
-]
-
-const alert = [
-    'Cancel',
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Kilogram</Text>,
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Gram</Text>,
-    <Text style={{ color: 'blue', fontSize: 15, fontWeight: 'bold', fontFamily: 'montserrat' }}>Miligram</Text>,
-]
 
 
 const SIZE = 80;
 //const storageRef = storage().ref('thumbnails_job').child(`${appendIDToImage}`);
+export default function(props) {
+    const route = useRoute();
+  
+    return <Planner {...props} route={route} />;
+  }  
+  
 
-// [anas]
-
-
-export default class PostFood extends Component {
+ class Planner extends Component {
     constructor() {
         super();
 
         //const user = firebase.auth().currentUser;
-        this.dbRef = firestore.collection('IngredientList');
+        this.plannerRef = firestore.collection('Planner');
         this.state = {
             currentUser: null,
             userID: null,
+            username:'',
+            itemname: '',
             email:'',
-            name:'',
             uniqueId: '',
+            jobdesc: '',
             url: '',
-            ingredientDesc:'',
+            worktype: '',
+            salary: '',
+            peoplenum: '',    
+            qualification:'',
             ingredientname:'',
             quantity:'',
+            buyPeople:[],
+            People:'',
             alert:'',
+            experience:'',
             isLoading: false,
             uploading: false,
             DateDisplay:'',
-            ExpiryDateDisplay:'',
             visibility: false,
-            visibilityExpiry:false,
-            switchValue: '',
-           metric: [
-                { gram: 'Kilogram', id: 1 },
-                { gram: 'Gram', id: 2 },
-                { gram: 'Miligram', id: 3 },
-            ],
-              selected1: 1
-            //modalVisible: false
+
         };
         this.setDate_Start = this.setDate_Start.bind(this);
 
-        //this.setDate = this.setDate.bind(this);
-        //this.selectWorkType = this.selectWorkType.bind(this);
-        //this.selectExperience = this.selectExperience.bind(this);
+;
         this.pickImage = this.pickImage.bind(this);
-
+        this.onUserSelected = this.onUserSelected.bind(this);
         this.saveData = this.saveData.bind(this);
-        // state = { ScaleAnimation: false };
 
-        //this.state.date = this.state.chosenDate.toString().substr(4, 12);
-        // this.setState({ userid: user })
+
 
     }
 
     componentDidMount() {
-        //get data first
+        const {route} = this.props;
+        this.peopleRef = firestore.collection('Users').where('address', '==', route.params.planLocate);
+        this.unsubscribe = this.peopleRef.onSnapshot(this.getCollection);
+        console.log("testing data:", this.peopleRef);
+    
         var user = auth.currentUser;
         var name, uid;
         if (user != null) {
@@ -112,18 +99,63 @@ export default class PostFood extends Component {
         const { currentUser } = auth;
         this.setState({ currentUser });
         this.state.userID = currentUser.uid;
-        this.setState({ jobCreaterName: currentUser.displayName })  
-      }
+        //this.setState({ jobCreaterName: currentUser.displayName })  
+    
+    }
 
-    onMetricSelected(value) {
+    componentWillUnmount(){
+        this.unsubscribe();
+    }
+
+    getCollection = (querySnapshot) => {
+        const buyPeople = [];
+        querySnapshot.forEach((res) => {
+            const {
+                userID,
+                email,
+                fullname,
+                address,
+                description,
+                url,
+                phoneNum,
+            } = res.data();
+            buyPeople.push({
+                key: res.id,
+                res,
+                userID,
+                email,
+                fullname,
+                address,
+                description,
+                url,
+                phoneNum,
+            });
+        });
+        this.setState({
+            buyPeople,
+            isLoading: false
+        })
+        console.log("flatlist",this.state.buyPeople)
+    }
+
+
+
+    
+/*     onMetricSelected(value) {
         this.setState({
           selectedMetric: value
         });
+      } */
+
+    onUserSelected(value) {
+        this.setState({
+          People: value
+        });
+        console.log('value_people', value)
       }
 
 
-      //set date time picker for when to buy
-/*     handleConfirm=(date)=>{
+    handleConfirm=(date)=>{
         this.setState({DateDisplay:date.toUTCString()})
     }
 
@@ -133,20 +165,7 @@ export default class PostFood extends Component {
 
     onPressButtonClick = () => {
         this.setState({visibility:true})
-    } */
-
-          //set date time picker for when to buy
-          handleConfirmExpiration=(date)=>{
-            this.setState({ExpiryDateDisplay:date.toUTCString()})
-        }
-    
-        onPressCancelExpiration = () => {
-            this.setState({visibility:false})
-        }
-    
-        onPressButtonClickExpiration = () => {
-            this.setState({visibility:true})
-        }
+    }
 
 
  
@@ -158,10 +177,6 @@ export default class PostFood extends Component {
     };
 
 
-    setName = (value) =>{
-        this.setState({name: value});
-    }
-
     setUserID = (value) => {
         this.setState({ userID: value });
 
@@ -172,36 +187,11 @@ export default class PostFood extends Component {
 
     }
 
-    setTheAlert = (value) => {
-        this.setState({alert: value});
+    setItemName = (value) => {
+        this.setState({itemname: value});
     }
 
-    //to ensure data is here is less than quantity
-    setAlert = (value) =>{
-        if(this.state.alert <= this.setQuantity){
-            this.setState({
-                alert: value
-            })
-        }else{
-            this.renderErrorAlert();        
-            // Alert.alert("You Have To Input Number Less Than Quantity")
-        }
-    }
 
-    renderErrorAlert = () =>{
-        let textInput = this.state.alert;
-        textInput.push(
-        <View style={{ flexDirection: 'row', margin: 5 }}>
-        <Badge danger>
-            <Icon name="star" style={{ fontSize: 15, color: "#fff", lineHeight: 20 }}/>
-        </Badge>
-    </View>
-        );
-    }
-    setQuantity = (value) => {
-        this.setState({ quantity: value });
-
-    }
 
     setIngredientName = (value) =>{
         this.setState({ ingredientname: value})
@@ -215,9 +205,14 @@ export default class PostFood extends Component {
         this.setState({ uniqueId: value })
     }
 
-    setIngredientDesc = (value) => {
-        this.setState({ ingredientDesc: value })
+    setJobDesc = (value) => {
+        this.setState({ jobdesc: value })
         //console.log('job desc:',value);
+    }
+
+
+    setPeopleNum = (value) => {
+        this.setState({ peoplenum: value })
     }
 
     setDate_Start(newDate) {
@@ -326,51 +321,53 @@ export default class PostFood extends Component {
 
     saveData = async() => {
         console.log("state", this.state)
-        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.ExpiryDateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
-            if (isNaN(this.state.quantity)) {
+        console.log("usedID", this.state.userID)
+        console.log("itemname", this.state.itemname)
+        console.log("date", this.state.DateDisplay)
+        console.log("people", this.state.People)
+        console.log("url", this.state.url)
+
+        if (this.state.userID && this.state.itemname && this.state.DateDisplay && this.state.People && this.state.url) {
+            if (isNaN(this.state.salary && this.state.peoplenum)) {
                 Alert.alert('Status', 'Invalid Figure!');
             }
             else {
                 //await auth.currentUser.uid.then(doc =>{
                     
-                    this.dbRef.add({
+                    this.plannerRef.add({
                         uid: auth.currentUser.uid,
-                        ingredientname: this.state.ingredientname,
-                        ingredientDesc: this.state.ingredientDesc,
-                        quantity: this.state.quantity,
-                        expiry_Date: this.state.ExpiryDateDisplay, 
-                        ExpiryReceived: this.state.switchValue,
-                        alert: this.state.alert,
+                        itemname: this.state.itemname,
+                        date_to_buy: this.state.DateDisplay,
+                        //people_inCharge: this.state.buyPeople,
+                        people_inCharge: this.state.People,
+                        //people: this.state.selectedMetric,
                         url: this.state.url,
-
                         
                     }).then((res) => {
                         console.log("[saveData] Done add to firebase", res);
 
                         this.setState({
-                            ingredientname: '',
-                            ingredientDesc: '',
-                            quantity: '',
-                            expiry_Date:'',
-                            ExpiryReceived:'',
-                            url: '',
-                            alert:'',
-                        
-                        
+                            itemname,
+                            date_to_buy,
+                            people_inCharge,
+                            url 
                         })
                     });
-                    Alert.alert('New Ingredient Has Been Posted', 'Please Choose',
+                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
                         [
                             {
                                 text: "Return To Main Screen",
                                 onPress: () => this.props.navigation.navigate('Home')
                             },
+                            {
+                                text: "View Current Job Posted",
+                                onPress: () => this.props.navigation.navigate('Profile')
+                            }
                         ], { cancelable: false }
                     );
            // })
         }
         } else {
-            console.log("Alert", this.state)
             Alert.alert('Status', 'Empty Field(s)!');
         }
     }
@@ -389,44 +386,12 @@ export default class PostFood extends Component {
                 <Content padder>
                     <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Details</Text>
                     <Form>
+
                     <Item style={styles.inputGroup} fixedLabel last>
-                            <Label>Name</Label>
-                            <Input style={styles.startRouteBtn} onChangeText={this.setIngredientName} />
-                    </Item>
-
-                    <View style={styles.inputGroup} fixedLabel last>
-                            <Label>Item Description</Label>
-                        </View>
-                        <Item>
-                            <Textarea rowSpan={5} colSpan={5} onChangeText={this.setIngredientDesc} bordered style={styles.startTextBtn} placeholder="Tell something about the job Here" />
+                            <Label>Things to Buy</Label>
+                            <Input style={styles.startRouteBtn} onChangeText={this.setItemName} />
                         </Item>
 
-
-                <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClickExpiration}>
-                    <DateTimePickerModal
-                        isVisible={this.state.visibility}
-                        onConfirm={this.handleConfirmExpiration}
-                        onCancel={this.onPressCancelExpiration}
-                        mode="datetime"
-                    />
-                    <View style={{flex:1, flexDirection:'column'}}>
-                       <View style={{flex:1, flexDirection:'row'}}>
-                         <Text style={{fontWeight: "bold", fontSize: 15}}>
-                               Expiration Date:                
-                         </Text>
-                                    <Icon name="md-calendar" />
-                        </View>
-                        <Text style={{padding: 2, margin:5}}>{this.state.ExpiryDateDisplay} </Text>
-                    </View>
-
-                </Item>
-                        <Item style={styles.inputGroup} fixedLabel last>
-                            <Label>Receive Expiry Alert Before 3 days before</Label>
-                            <Switch  
-                                value={this.state.switchValue}  
-                                onValueChange ={(switchValue)=>this.setState({switchValue})}/>  
-                        </Item>
-                        
                         <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'center' }}>
                                 <Button iconLef style={{ backgroundColor: '#1B6951', padding: 2, margin: 3, width: 150}} onPress={this.pickImage}>
                                     <Icon name="md-image" />
@@ -445,46 +410,66 @@ export default class PostFood extends Component {
                             {this._maybeRenderUploadingOverlay()}
 
 
-    
-                        <Item>
-                             <Label>Quantity (in gram)</Label>
-                             <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setQuantity} />
-                             <Text>{this.state.quantity}</Text>
-                        </Item> 
-                        <Item>                  
-                           
-                        </Item>  
+                    <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClick}>
+                    <DateTimePickerModal
+                        isVisible={this.state.visibility}
+                        onConfirm={this.handleConfirm}
+                        onCancel={this.onPressCancel}
+                        mode="datetime"
+                    />
+                    <View style={{flex:1, flexDirection:'column'}}>
+                       <View style={{flex:1, flexDirection:'row'}}>
+                         <Text style={{fontWeight: "bold", fontSize: 15}}>
+                               When To Buy:                
+                         </Text>
+                                    <Icon name="md-calendar" />
+                        </View>
+                        <Text style={{padding: 2, margin:5}}>{this.state.DateDisplay} </Text>
+                    </View>
+
+                    </Item>
 
 
-                        <Item>
-                             <Label>Alert When Below (in gram)</Label>
-                             <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setTheAlert} />
-                             <Text>{this.state.alert}</Text>
-                            
-                        </Item> 
-                        <Item style={{marginTop: 30, marginBottom:10, marginLeft:2, marginRight:10}}  >  
-{/*                         <Button style={{ borderRadius: 40, marginRight: 10, elevation: 12 }} onPress={this.showActionSheetalert}>
-                                <ActionSheet
-                                    ref={o => this.ActionSheet = o}
-                                    title={<Text style={{ color: '#000', fontSize: 18 }}>Which one do you like?</Text>}
-                                    options={alert}
-                                    cancelButtonIndex={0}
-                                    destructiveButtonIndex={6}
-                                    selectedValue={this.state.alert}
-                                    value={this.state.alert}
-                                    onPress={this.handlePressalert}
-                                   
-                                />
-                                <Text style={{ fontWeight: "bold", fontSize: 10, padding: 10 }}>Choose Metric</Text>
+                        <Item style={styles.inputGroup} fixedLabel last>
+                            <Label>Who Will Buy</Label>
+                            <Form>
+                                <Picker
+                                    style={{ width: 200, height: 40 }}
+                                    iosHeader="Branch"
+                                    Header="User"
+                                    mode="dropdown"
+                                    textStyle={{ color: 'grey' }}
+                                    placeholder='Select User'
+                                    headerBackButtonText='Geri'
+                                    selectedValue={this.state.buyPeople}
+                                  /*   onValueChange ={(itemValue, itemIndex) =>  
+                                     {
+                                         return(
+                                            <Picker.Item label={itemValue.fullname} value={itemValue.fullname} key={itemIndex} />
 
-                            </Button> */}
-                        </Item>  
+                                         )
+                                     }} */
+                                    onValueChange={(value) => this.onUserSelected(value)}
+                                    >
+                                  {this.state.buyPeople.map((buyPeople, i) => {
+                                        return (
+                                        <Picker.Item label={buyPeople.fullname} value={buyPeople.fullname} key={i} />
+                                        );
+                                    }
+                                )} 
+                                    </Picker>
+                                    
+                         </Form> 
+                         
+                  
+                        </Item>
 
+                    
 
                     </Form>
 
                     <Button block success last style={{ marginTop: 50 }} onPress={this.saveData.bind(this)}>
-                        <Text style={{ fontWeight: "bold" }}>Update</Text>
+                        <Text style={{ fontWeight: "bold" }}>Done</Text>
                     </Button>
                 </Content>
 

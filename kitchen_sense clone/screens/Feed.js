@@ -126,7 +126,27 @@ export default class Home extends Component {
 
         //for  receiving expiry date 
 
-
+        //expiring after 3 days
+        const trigger = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) ;
+        trigger.setMinutes(0);
+        trigger.setSeconds(0);
+        
+        //get item name
+        let item = firestore.collection('Ingredient').doc().onSnapshot(doc=>{
+            console.log(doc);
+            const{itemname} = doc.data();
+            this.setState({itemname})
+            console.log(JSON.stringify(doc))
+            //itemname = item.itemname;
+        })
+        
+        Notifications.scheduleNotificationAsync({
+            content: {
+              title: ''+item,
+              body: "The Item Will Expired In 3 Days",
+            },
+            trigger,
+          }); 
            
       };
 

@@ -29,7 +29,7 @@ import { Alert } from 'react-native';
 
 console.disableYellowBox = true;
 
-export default class Profile extends Component {
+export default class AccountDetail extends Component {
 
 
     constructor() {
@@ -157,10 +157,9 @@ export default class Profile extends Component {
                     <Card>
                     <CardItem header bordered >
                             <View style={{ flex: 1, marginStart: 10, marginBottom: 40 }}>                 
-                                <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('AddUserLocation')}>
+                                <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('Household')}>
                                     <Text>Manage Household User</Text>
                                 </Button>
-
                             
                             </View>  
                         </CardItem>
@@ -232,18 +231,16 @@ export default class Profile extends Component {
                         </CardItem>
                     </Card>
 
-                    <Card style={{ height: 50 }}>
-                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyJob')}>
-                            <Text style={{ justifyContent: 'center', fontSize: 17 }}>Click Here to View Your Uploaded Job</Text>
-                        </CardItem>
-                    </Card>
-                    
-                     <Card style={{ height: 50 }} >
-                        <CardItem header bordered onPress={() => this.props.navigation.navigate('Planning')}>
+                
+                     <Card>
+                        <CardItem header bordered>
 
                             <Text>Buying Plan</Text>
                         </CardItem>
                         <CardItem cardBody>
+                            <Content>
+                               
+                            </Content>
                         </CardItem>
 {/*                         <CardItem cardBody>
                             <Content>

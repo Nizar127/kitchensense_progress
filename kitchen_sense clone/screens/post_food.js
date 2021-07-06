@@ -123,7 +123,7 @@ export default class PostFood extends Component {
 
 
       //set date time picker for when to buy
-/*     handleConfirm=(date)=>{
+    handleConfirm=(date)=>{
         this.setState({DateDisplay:date.toUTCString()})
     }
 
@@ -133,7 +133,7 @@ export default class PostFood extends Component {
 
     onPressButtonClick = () => {
         this.setState({visibility:true})
-    } */
+    }
 
           //set date time picker for when to buy
           handleConfirmExpiration=(date)=>{
@@ -141,11 +141,11 @@ export default class PostFood extends Component {
         }
     
         onPressCancelExpiration = () => {
-            this.setState({visibility:false})
+            this.setState({visibilityExpiry:false})
         }
     
         onPressButtonClickExpiration = () => {
-            this.setState({visibility:true})
+            this.setState({visibilityExpiry:true})
         }
 
 
@@ -326,7 +326,7 @@ export default class PostFood extends Component {
 
     saveData = async() => {
         console.log("state", this.state)
-        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.ExpiryDateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
+        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.DateDisplay && this.state.ExpiryDateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
             if (isNaN(this.state.quantity)) {
                 Alert.alert('Status', 'Invalid Figure!');
             }
@@ -338,6 +338,7 @@ export default class PostFood extends Component {
                         ingredientname: this.state.ingredientname,
                         ingredientDesc: this.state.ingredientDesc,
                         quantity: this.state.quantity,
+                        date_bought: this.state.DateDisplay,
                         expiry_Date: this.state.ExpiryDateDisplay, 
                         ExpiryReceived: this.state.switchValue,
                         alert: this.state.alert,
@@ -351,6 +352,7 @@ export default class PostFood extends Component {
                             ingredientname: '',
                             ingredientDesc: '',
                             quantity: '',
+                            date_bought:'',
                             expiry_Date:'',
                             ExpiryReceived:'',
                             url: '',
@@ -400,6 +402,25 @@ export default class PostFood extends Component {
                         <Item>
                             <Textarea rowSpan={5} colSpan={5} onChangeText={this.setIngredientDesc} bordered style={styles.startTextBtn} placeholder="Tell something about the job Here" />
                         </Item>
+
+                 <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClick}>
+                    <DateTimePickerModal
+                        isVisible={this.state.visibility}
+                        onConfirm={this.handleConfirm}
+                        onCancel={this.onPressCancel}
+                        mode="datetime"
+                    />
+                    <View style={{flex:1, flexDirection:'column'}}>
+                       <View style={{flex:1, flexDirection:'row'}}>
+                         <Text style={{fontWeight: "bold", fontSize: 15}}>
+                               When To Buy:                
+                         </Text>
+                                    <Icon name="md-calendar" />
+                        </View>
+                        <Text style={{padding: 2, margin:5}}>{this.state.DateDisplay} </Text>
+                    </View>
+
+                </Item>
 
 
                 <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClickExpiration}>

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import Feed from '../screens/Feed';
 import * as Location from 'expo-location';
 
-const AddUserLocation = ({ navigation }) => {
+const PlanLocation = ({ navigation }) => {
   const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     'Wait, we are fetching you location...'
@@ -40,15 +40,15 @@ const AddUserLocation = ({ navigation }) => {
         longitude
       });
   
-      for (let myaddress of response) {
+      for (let planLocate of response) {
         
 
-        let address = `${myaddress.name}, ${myaddress.street}, ${myaddress.postalCode}, ${myaddress.city}`;
+        let address = `${planLocate.name}, ${planLocate.street}, ${planLocate.postalCode}, ${planLocate.city}`;
   
         setDisplayCurrentAddress(address);
         if (address.length > 0) {
             setTimeout(() => {
-              navigation.navigate('Household', { myaddress: address });
+              navigation.navigate('TestPlan', { planLocate: address });
              
             }, 2000);
           }
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
 });
 
 
-export default AddUserLocation;
+export default PlanLocation;
 

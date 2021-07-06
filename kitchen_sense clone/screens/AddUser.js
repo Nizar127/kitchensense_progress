@@ -17,19 +17,29 @@ import {
     Thumbnail,
     Text,
     Icon,
-    Picker,
-    Badge,
+    
     DatePicker,
     Footer,
     FooterTab,
     Button,
     Textarea
 } from 'native-base';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {db, auth, storage, firestore} from '../config/Firebase';
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'react-native-uuid';
 import ActionSheet from 'react-native-actionsheet'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+const dataArray = [
+    { title: "Personal Bio", content: "Smart, Simple, Hardworking and Easy to adapt" },
+    { title: "Skills", content: "Programming, Engineering, Mechanical, Design" },
+    { title: "Experience", content: "Working with Creative World, Worked With Brandpacker Solution" },
+    { title: "Personal Projects", content: "Develop app for ESports, Develop personal e-wallet app" },
+    { title: "Education Background", content: "UITM, UIAM, Oracle Academy" },
+    { title: "Interest", content: "Love to coding, loves science" },
+    { title: "Achievement", content: "3 times Deans's list award" }
+];
+
 
 
 const quantity = [
@@ -53,43 +63,42 @@ const SIZE = 80;
 // [anas]
 
 
-export default class PostFood extends Component {
+export default class AddUser extends Component {
     constructor() {
         super();
 
         //const user = firebase.auth().currentUser;
-        this.dbRef = firestore.collection('IngredientList');
+        this.dbRef = firestore.collection('Job_list');
         this.state = {
             currentUser: null,
             userID: null,
+            jobname: '',
             email:'',
-            name:'',
             uniqueId: '',
+            jobdesc: '',
             url: '',
-            ingredientDesc:'',
+            worktype: '',
+            salary: '',
+            peoplenum: '',    
+            qualification:'',
             ingredientname:'',
             quantity:'',
             alert:'',
+            experience:'',
             isLoading: false,
             uploading: false,
             DateDisplay:'',
-            ExpiryDateDisplay:'',
-            visibility: false,
-            visibilityExpiry:false,
-            switchValue: '',
-           metric: [
-                { gram: 'Kilogram', id: 1 },
-                { gram: 'Gram', id: 2 },
-                { gram: 'Miligram', id: 3 },
-            ],
-              selected1: 1
+            visibility: false
+            //chosenDate: new Date(),
+            //date_start: new Date().toString().substr(4, 12),
+            //switchValue: false  
             //modalVisible: false
         };
         this.setDate_Start = this.setDate_Start.bind(this);
 
         //this.setDate = this.setDate.bind(this);
-        //this.selectWorkType = this.selectWorkType.bind(this);
-        //this.selectExperience = this.selectExperience.bind(this);
+        this.selectWorkType = this.selectWorkType.bind(this);
+        this.selectExperience = this.selectExperience.bind(this);
         this.pickImage = this.pickImage.bind(this);
 
         this.saveData = this.saveData.bind(this);
@@ -99,7 +108,6 @@ export default class PostFood extends Component {
         // this.setState({ userid: user })
 
     }
-
     componentDidMount() {
         //get data first
         var user = auth.currentUser;
@@ -115,15 +123,7 @@ export default class PostFood extends Component {
         this.setState({ jobCreaterName: currentUser.displayName })  
       }
 
-    onMetricSelected(value) {
-        this.setState({
-          selectedMetric: value
-        });
-      }
-
-
-      //set date time picker for when to buy
-/*     handleConfirm=(date)=>{
+    handleConfirm=(date)=>{
         this.setState({DateDisplay:date.toUTCString()})
     }
 
@@ -133,22 +133,37 @@ export default class PostFood extends Component {
 
     onPressButtonClick = () => {
         this.setState({visibility:true})
-    } */
-
-          //set date time picker for when to buy
-          handleConfirmExpiration=(date)=>{
-            this.setState({ExpiryDateDisplay:date.toUTCString()})
-        }
-    
-        onPressCancelExpiration = () => {
-            this.setState({visibility:false})
-        }
-    
-        onPressButtonClickExpiration = () => {
-            this.setState({visibility:true})
-        }
+    }
 
 
+    showActionSheet = () => {
+        this.ActionSheet.show()
+    }
+
+    showActionSheetalert = () => {
+        this.ActionSheet.show()
+    }
+
+    handlePressquantity = buttonIndex => {
+        this.setState({
+          selected: buttonIndex,
+          quantity: quantity[buttonIndex]
+          
+        });
+        console.log('actionsheet:',buttonIndex);
+
+      };
+      
+
+      handlePressalert = buttonIndex => {
+        this.setState({
+          selected: buttonIndex,
+          alert: alert[buttonIndex]
+          
+        });
+        console.log('actionsheet5',buttonIndex);
+
+      };
  
     toggleView = () => {
         Animated.timing(this.mode, {
@@ -157,10 +172,6 @@ export default class PostFood extends Component {
         }).start();
     };
 
-
-    setName = (value) =>{
-        this.setState({name: value});
-    }
 
     setUserID = (value) => {
         this.setState({ userID: value });
@@ -172,35 +183,22 @@ export default class PostFood extends Component {
 
     }
 
-    setTheAlert = (value) => {
-        this.setState({alert: value});
+
+    selectWorkType = (value) => {
+        this.setState({
+            worktype: value
+        })
     }
 
-    //to ensure data is here is less than quantity
-    setAlert = (value) =>{
-        if(this.state.alert <= this.setQuantity){
-            this.setState({
-                alert: value
-            })
-        }else{
-            this.renderErrorAlert();        
-            // Alert.alert("You Have To Input Number Less Than Quantity")
-        }
+    setQualification = (value) => {
+        this.setState({ qualification: value })
+        //console.log('job desc:',value);
     }
 
-    renderErrorAlert = () =>{
-        let textInput = this.state.alert;
-        textInput.push(
-        <View style={{ flexDirection: 'row', margin: 5 }}>
-        <Badge danger>
-            <Icon name="star" style={{ fontSize: 15, color: "#fff", lineHeight: 20 }}/>
-        </Badge>
-    </View>
-        );
-    }
-    setQuantity = (value) => {
-        this.setState({ quantity: value });
-
+    selectExperience = (value) => {
+        this.setState({
+            experience: value
+        })
     }
 
     setIngredientName = (value) =>{
@@ -215,9 +213,18 @@ export default class PostFood extends Component {
         this.setState({ uniqueId: value })
     }
 
-    setIngredientDesc = (value) => {
-        this.setState({ ingredientDesc: value })
+    setJobDesc = (value) => {
+        this.setState({ jobdesc: value })
         //console.log('job desc:',value);
+    }
+
+
+    setSalary = (value) => {
+        this.setState({ salary: value })
+    }
+
+    setPeopleNum = (value) => {
+        this.setState({ peoplenum: value })
     }
 
     setDate_Start(newDate) {
@@ -326,8 +333,8 @@ export default class PostFood extends Component {
 
     saveData = async() => {
         console.log("state", this.state)
-        if (this.state.userID && this.state.ingredientname && this.state.ingredientDesc && this.state.ExpiryDateDisplay && this.state.switchValue && this.state.quantity && this.state.alert && this.state.url) {
-            if (isNaN(this.state.quantity)) {
+        if (this.state.userID && this.state.worktype && this.state.qualification && this.state.experience && this.state.email&& this.state.jobname && this.state.uniqueId && this.state.jobdesc && this.state.salary && this.state.peoplenum  && this.state.url) {
+            if (isNaN(this.state.salary && this.state.peoplenum)) {
                 Alert.alert('Status', 'Invalid Figure!');
             }
             else {
@@ -335,42 +342,46 @@ export default class PostFood extends Component {
                     
                     this.dbRef.add({
                         uid: auth.currentUser.uid,
-                        ingredientname: this.state.ingredientname,
-                        ingredientDesc: this.state.ingredientDesc,
-                        quantity: this.state.quantity,
-                        expiry_Date: this.state.ExpiryDateDisplay, 
-                        ExpiryReceived: this.state.switchValue,
-                        alert: this.state.alert,
+                        jobCreatorname: this.state.email,
+                        jobname: this.state.jobname,
+                        uniqueId: this.state.uniqueId,
+                        jobdesc: this.state.jobdesc,
+                        salary: this.state.salary,
                         url: this.state.url,
-
+                        worktype: this.state.worktype,
+                        experience: this.state.experience,
+                        qualification: this.state.qualification,
+                        peoplenum: this.state.peoplenum,
                         
                     }).then((res) => {
                         console.log("[saveData] Done add to firebase", res);
 
                         this.setState({
-                            ingredientname: '',
-                            ingredientDesc: '',
-                            quantity: '',
-                            expiry_Date:'',
-                            ExpiryReceived:'',
+                            jobname: '',
+                            uniqueId: '',
+                            jobdesc: '',
+                            salary: '',
                             url: '',
-                            alert:'',
-                        
+                            peoplenum: '',
+                            time: 0,
                         
                         })
                     });
-                    Alert.alert('New Ingredient Has Been Posted', 'Please Choose',
+                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
                         [
                             {
                                 text: "Return To Main Screen",
-                                onPress: () => this.props.navigation.navigate('Home')
+                                onPress: () => this.props.navigation.navigate('Feed')
                             },
+                            {
+                                text: "View Current Job Posted",
+                                onPress: () => this.props.navigation.navigate('MyJob')
+                            }
                         ], { cancelable: false }
                     );
            // })
         }
         } else {
-            console.log("Alert", this.state)
             Alert.alert('Status', 'Empty Field(s)!');
         }
     }
@@ -389,102 +400,43 @@ export default class PostFood extends Component {
                 <Content padder>
                     <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Details</Text>
                     <Form>
-                    <Item style={styles.inputGroup} fixedLabel last>
-                            <Label>Name</Label>
-                            <Input style={styles.startRouteBtn} onChangeText={this.setIngredientName} />
-                    </Item>
 
-                    <View style={styles.inputGroup} fixedLabel last>
-                            <Label>Item Description</Label>
-                        </View>
-                        <Item>
-                            <Textarea rowSpan={5} colSpan={5} onChangeText={this.setIngredientDesc} bordered style={styles.startTextBtn} placeholder="Tell something about the job Here" />
+                    <Item style={styles.inputGroup} fixedLabel last>
+                            <Label>Things to Buy</Label>
+                            <Input  keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setSalary} />
                         </Item>
 
-
-                <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClickExpiration}>
+                    <Item style={styles.inputGroup} fixedLabel last onPress={this.onPressButtonClick}>
                     <DateTimePickerModal
                         isVisible={this.state.visibility}
-                        onConfirm={this.handleConfirmExpiration}
-                        onCancel={this.onPressCancelExpiration}
+                        onConfirm={this.handleConfirm}
+                        onCancel={this.onPressCancel}
                         mode="datetime"
                     />
                     <View style={{flex:1, flexDirection:'column'}}>
                        <View style={{flex:1, flexDirection:'row'}}>
                          <Text style={{fontWeight: "bold", fontSize: 15}}>
-                               Expiration Date:                
+                               When To Buy:                
                          </Text>
                                     <Icon name="md-calendar" />
                         </View>
-                        <Text style={{padding: 2, margin:5}}>{this.state.ExpiryDateDisplay} </Text>
+                        <Text style={{padding: 2, margin:5}}>{this.state.DateDisplay} </Text>
                     </View>
 
-                </Item>
+                    </Item>
+
+
                         <Item style={styles.inputGroup} fixedLabel last>
-                            <Label>Receive Expiry Alert Before 3 days before</Label>
-                            <Switch  
-                                value={this.state.switchValue}  
-                                onValueChange ={(switchValue)=>this.setState({switchValue})}/>  
+                            <Label>Who Will Buy</Label>
+                            <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setPeopleNum} />
                         </Item>
-                        
-                        <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'center' }}>
-                                <Button iconLef style={{ backgroundColor: '#1B6951', padding: 2, margin: 3, width: 150}} onPress={this.pickImage}>
-                                    <Icon name="md-image" />
-                                        <Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold' }}>Library</Text>
-                                </Button>
-                                
-                                <Button iconLef style={{ backgroundColor: '#2869F4', padding: 2, margin: 3 }}
-                                                    onPress={this._takePhoto}>
-                                    <Icon name="md-camera" />
-                                        <Text style={{ textAlign: 'center', color: 'white', fontWeight: 'bold'}}>Take Photo</Text>
-                                </Button>
-                            </View>
 
-
-                            {this._maybeRenderImage()}
-                            {this._maybeRenderUploadingOverlay()}
-
-
-    
-                        <Item>
-                             <Label>Quantity (in gram)</Label>
-                             <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setQuantity} />
-                             <Text>{this.state.quantity}</Text>
-                        </Item> 
-                        <Item>                  
-                           
-                        </Item>  
-
-
-                        <Item>
-                             <Label>Alert When Below (in gram)</Label>
-                             <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setTheAlert} />
-                             <Text>{this.state.alert}</Text>
-                            
-                        </Item> 
-                        <Item style={{marginTop: 30, marginBottom:10, marginLeft:2, marginRight:10}}  >  
-{/*                         <Button style={{ borderRadius: 40, marginRight: 10, elevation: 12 }} onPress={this.showActionSheetalert}>
-                                <ActionSheet
-                                    ref={o => this.ActionSheet = o}
-                                    title={<Text style={{ color: '#000', fontSize: 18 }}>Which one do you like?</Text>}
-                                    options={alert}
-                                    cancelButtonIndex={0}
-                                    destructiveButtonIndex={6}
-                                    selectedValue={this.state.alert}
-                                    value={this.state.alert}
-                                    onPress={this.handlePressalert}
-                                   
-                                />
-                                <Text style={{ fontWeight: "bold", fontSize: 10, padding: 10 }}>Choose Metric</Text>
-
-                            </Button> */}
-                        </Item>  
-
+                    
 
                     </Form>
 
                     <Button block success last style={{ marginTop: 50 }} onPress={this.saveData.bind(this)}>
-                        <Text style={{ fontWeight: "bold" }}>Update</Text>
+                        <Text style={{ fontWeight: "bold" }}>Done</Text>
                     </Button>
                 </Content>
 

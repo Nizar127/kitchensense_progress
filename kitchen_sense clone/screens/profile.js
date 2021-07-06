@@ -160,7 +160,6 @@ export default class Profile extends Component {
                                 <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('AddUserLocation')}>
                                     <Text>Manage Household User</Text>
                                 </Button>
-
                             
                             </View>  
                         </CardItem>

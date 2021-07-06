@@ -105,7 +105,7 @@ export default class MyJob extends Component {
                                         });
                                     }}>
                                     <Left>
-                                        <Text>{item.ingredientname}</Text>
+                                        <Text>{item.jobname}</Text>
                                     </Left>
                                     <Right>
                                         <Icon name="arrow-forward" />
@@ -141,7 +141,7 @@ export default class MyJob extends Component {
 
                 <Footer>
                     <FooterTab>
-                        <Button vertical onPress={() => { this.props.navigation.navigate('PostFood') }}>
+                        <Button vertical onPress={() => { this.props.navigation.navigate('PostJob') }}>
                             <Icon name="md-briefcase" />
                             <Text>New Job</Text>
                         </Button>

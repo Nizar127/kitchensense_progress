@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { KeyboardAvoidingView, FlatList, Modal, Alert, TouchableOpacity, ActivityIndicator, StyleSheet, SafeAreaView } from 'react-native';
+import { KeyboardAvoidingView, Image, FlatList, Modal, Alert, TouchableOpacity, ActivityIndicator, StyleSheet, SafeAreaView } from 'react-native';
 import {
     Container,
     Header,
@@ -32,7 +32,7 @@ import * as Notifications from 'expo-notifications';
 
 
 
-export default class Home extends Component {
+export default class DataPlanner extends Component {
 
     constructor() {
         super();
@@ -42,172 +42,79 @@ export default class Home extends Component {
         //this.hiringRef = firestore.collection('Job_Hired');
 
         this.state = {
-            food: [],
-            isLoading: true,
-            show: true,
-            username: null,
-            jobname: null,
+            planner: [],
+            uid:'',
+            date_to_buy:'',
+            itemname: '',
+            itemDesc: '',
+            orderDescription:'', 
+            orderManPhoneNum: '',
+            orderedEmail: '',
+            orderedMan: '',
+            orderedid: '',
+            userPicture: '', 
+            people_inChargeID:'', 
             url: '',
-            ingredientDesc:'',
-            ingredientname:'',
-            quantity:'',
-            alert:'',
-            date_bought:'',
-            ExpiryReceived: '',
-            //uid:'',
-            jobposition: null,
-            isVisible: false,
-            userID: '',
-            lat: '',
-            lng: '',
-            startDate: '',
-            workingLocation: '',
-            period: '',
-            task: '',
-            time: '',
-            worktime: '',
             fabActive:false,
             
         };
-       // this.selectWorkTime = this.selectWorkTime.bind(this);
-        //this.setDate_Start = this.setDate_Start.bind(this);
-        //this.setDate_End = this.setDate_End.bind(this);
 
     }
 
 
 
     componentDidMount() {
-        this.feedRef = firestore.collection('IngredientList');
-        this.unsubscribe = this.feedRef.onSnapshot(this.getCollection);
-        //this.currentUser = await auth.currentUser;
-      //  await this.registerForPushNotificationsAsync();
-
+        this.plannerRef = firestore.collection('Planner').where('people_InCharge', '==', auth.currentUser.uid)/* .where('people_inChargeID' == auth.currentUser.uid) */;
+        this.unsubscribe = this.plannerRef.onSnapshot(this.getCollection);
+        console.log('plannerref', this.plannerRef);
     } 
 
-    sendPushNotificationOnQty = () => {
-        let lowqty = firestore.collection('Ingredient').doc().onSnapshot(doc=>{
-            //console.log(doc);
-            const{quantity} = doc.data();
-            this.setState({quantity})
-            console.log("qty",doc)
-            //itemname = item.itemname;
-        })
 
-        // this is for sending notification if quanity low than 100
-        try{
-
-            if(lowqty === "100"){
-                firestore.collection('Users').doc(auth.currentUser.uid).get().then((snapshot) =>{
-                    snapshot.foreach((childSnapshot) =>{
-                        var expotoken = childSnapshot.val().expoToken;
-                        let response = fetch('https://exp.host/--/api/v2/push/send',
-                         {
-                            method: 'POST',
-                            headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify
-                            ({
-                                to: expotoken,
-                                sound: 'default',
-                                title: 'Kitchen Sense',
-                                body: 'This item has been in Low Quantity.'
-                            })
-                        });
-                    })
-                })
-                
-            }
-        }catch(error){
-            console.log(error)
-        }
-
-        //for  receiving expiry date 
-
-
-           
-      };
-
-
-     
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
 
     getCollection = (querySnapshot) => {
-        const food = [];
+        const planner = [];
         querySnapshot.forEach((res) => {
             const {
-                uid,
-                ingredientname,
-                ingredientDesc,
-                quantity,
-                date_bought,
-                ExpiryReceived,
-                alert,
-                url
+                userid,
+                date,
+                name_item,
+                Desc_item,
+                PersonEmail,
+                PersonId,
+                PersonName,
+                PersonPicture,
+                PersonPhoneNum,
+                pic,
+                people_InCharge,
             } = res.data();
-            food.push({
+            planner.push({
                 key: res.id,
                 res,
-                uid,
-                ingredientname,
-                ingredientDesc,
-                quantity,
-                date_bought,
-                ExpiryReceived,
-                alert,
-                url
+                userid,
+                date,
+                name_item,
+                Desc_item,
+                PersonEmail,
+                PersonId,
+                PersonName,
+                PersonPicture,
+                PersonPhoneNum,
+                pic,
+                people_InCharge,
             });
         });
         this.setState({
-            food,
+            planner,
             isLoading: false
         })
     }
-    onCancel() {
-        this.TimePicker.close();
-    }
-
-    onConfirm(hour, minute) {
-        this.setState({ time: `${hour}:${minute}` });
-        this.TimePicker.close();
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     displayModal(show) {
         this.setState({ isVisible: show })
         
-    }
-
-
-    setTask = (value) => {
-        this.setState({ ...this.state, task: value })
-    }
-
-
-    static navigationOptions = {
-        title: 'Hire',
-
-        tabBarIcon: ({ tintColor }) => (
-            <Icon name="md-briefcase" style={{ color: tintColor, fontSize: 20 }} />
-        ),
-        headerTitle: {
-            title: 'GET-THE-JOB'
-        },
-
-        headerStyle: {
-            backgroundColor: '#f45fff',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold',
-        },
-
-
-
     }
 
     render() {
@@ -219,48 +126,46 @@ export default class Home extends Component {
                     <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>List of Ingredient</Text>
                     <View style={{ flex: 1, /* backgroundColor: '#292D5C' */ shadowColor: 'white', backgroundColor: '#242836' }}>
                     <FlatList
-                            data={this.state.food}                            
-                            contentContainerStyle={{ justifyContent:'space-around' }}
-                            numColumns={2}
+                            data={this.state.planner}                            
+                            
                             renderItem={({ item, index }) => {
                                 return (
-                                    <SafeAreaView>
-                                        <ScrollView>
                                             <View>
                                             <Card key={index} style={Style.card} >
                                                 <CardItem header bordered style={{ flexDirection: 'row' }}>
-                                                    <Text>{item.ingredientname}</Text>
+                                                    <Text>{item.name_item}</Text>
                                                 </CardItem>
                                                 <CardItem>
-                                                    <Thumbnail source={{uri: item.url}}/>
+                                                    <Image style={{height: 200}} source={{uri:item.pic}}/>
+                                                </CardItem>
+                                                <CardItem>
+                                                    <Left>
+                                                        <Thumbnail source={{uri: item.PersonPicture}}/>
+                                                    </Left>
+                                                    <Body>
+                                                        <Text>{item.PersonName}</Text>
+                                                    </Body>
                                                 </CardItem>
                                                 <CardItem>
                                                     <Body>
                                                         <View style={{ flexDirection:'row', alignItems: 'center'}}>
-                                                            <Text style={{paddingEnd:10}}>{item.quantity}</Text>
-                                                            <Text>gram</Text>
+                                                            <Text style={{paddingEnd:10}}>{item.itemDesc}</Text>
+                                                            
                                                         </View>
                                                     </Body>
                                                 </CardItem>
                                                 <CardItem style={{margin: 7,  flexDirection: 'column'}}>
                                                     <Body>
                                                         <Right>
+                                                            <Text style={{paddingEnd:10}}>Date To Buy: </Text>
                                                             <Text>
-                                                                {item.date_bought}
+                                                                {item.date}
                                                             </Text>
                                                         </Right>
-                                                    </Body>
-                                                    <Body>
-                                                        <Text>
-                                                            {item.alert}
-                                                        </Text>
                                                     </Body>
                                                 </CardItem>
                                             </Card>
                                             </View>
-
-                                        </ScrollView>
-                                    </SafeAreaView>
                                 )
                             }}
                         />
@@ -327,7 +232,7 @@ const Style = StyleSheet.create({
         elevation: 15,
         margin: 10,
         padding:10, 
-        maxWidth:200, 
+        //maxWidth:200, 
         
     },
     text: {

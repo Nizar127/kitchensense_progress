@@ -15,12 +15,14 @@ import {
     CardItem,
     Thumbnail,
     Text,
+    Item,
     Left,
     Body,
     Icon,
     List,
     ListItem,
     Separator,
+    Textarea,
     Button
 } from 'native-base';
 import {db, auth, storage, firestore} from '../config/Firebase';
@@ -29,7 +31,7 @@ import { Alert } from 'react-native';
 
 console.disableYellowBox = true;
 
-export default class Profile extends Component {
+export default class Account extends Component {
 
 
     constructor() {
@@ -39,6 +41,8 @@ export default class Profile extends Component {
         //firebase.firestore().collection('Users').doc(user.uid).set(user).collection('Job_Creator');
         this.state = {
             users: [],
+            skills: [],
+            experience: [],
             username: '',
             fullname: '',
             email: '',
@@ -69,7 +73,7 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        this.unsubscribe = firestore.collection('Users').doc(auth.currentUser.uid).onSnapshot(doc => {
+       /*  this.unsubscribe = firestore.collection('Employer').doc(auth.currentUser.uid).onSnapshot(doc => {
             console.log(doc);
             const { email, fullname, phoneNum, url, address, description, skills} = doc.data();
             this.setState({
@@ -79,15 +83,16 @@ export default class Profile extends Component {
                 phoneNum,
                 url,
                 address,
+                skills
             })
             console.log("doc", doc)
-        });
+        }); */
       
         //this.unsubscribe = firebase.firestore().collection('Users').onSnapshot(this.getCollection);
     }
 
     componentWillUnmount() {
-        this.unsubscribe();
+       // this.unsubscribe();
     }
 
 
@@ -129,6 +134,7 @@ export default class Profile extends Component {
         this.setState({ myText: value })
     }
 
+    
 
 
     static navigationOptions = {
@@ -154,124 +160,48 @@ export default class Profile extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <ScrollView>
-                    <Card>
-                    <CardItem header bordered >
-                            <View style={{ flex: 1, marginStart: 10, marginBottom: 40 }}>                 
-                                <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('AddUserLocation')}>
-                                    <Text>Manage Household User</Text>
-                                </Button>
 
+                    <Card style={{flex: 1, }}>
+                        <Text style={{ margin: 20, flex:1,fontWeight: 'bold', fontSize: 20, fontFamily: 'Helvetica', textAlign: 'center' }}>Confirm Your Account</Text>
+                    </Card>
+
+                    <Card>
+                                          
+                        <CardItem header bordered >
+                            <View style={{ flex: 1, marginStart: 10, marginBottom: 40 }}>
+                              
+                               
+                                <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('ListAccount')}>
+                                    <Text>Add Button</Text>
+                                </Button>
                             
                             </View>  
                         </CardItem>
-                        <CardItem cardBody>
-                            <Image source={{ uri: this.state.url }} style={{ height: 200, width: null, flex: 1 }} />
-                        </CardItem>
                         <CardItem>
-                            <Body>
-                                <Text style={{ fontSize: 20, fontWeight: 'bold', justifyContent: 'center' }}>{this.state.fullname ? this.state.fullname : auth.currentUser.email}</Text>
-                            </Body>
+                            <Text>Please Enter Your Address To Confirm Your Account</Text>
                         </CardItem>
-                    </Card>
-
-
-
-                    <Card style={{ height: 80 }}>
-                    <CardItem header bordered>
-                            <Text>FullName</Text>
-                        </CardItem>
-                        <CardItem cardBody bordered button>
-                            <Text style={{ margin: 30, fontWeight: 'bold'}}>{this.state.fullname}</Text>
-                        </CardItem>
-                    </Card> 
-
-                   <Card style={{ height: 100 }}>
-                   <CardItem header bordered>
-                            <Text>My Application</Text>
-                        </CardItem>
-                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyJob')}>
-                            <Text style={{ margin: 30}}>Click Here to View Your Uploaded Job</Text>
-                        </CardItem>
-                    </Card> 
-
-
-
-                    <Card style={{ height: 200 }}>
-                        <CardItem header bordered>
-                            <Text>About Us</Text>
-                        </CardItem>
-                        <CardItem cardBody bordered button>
-                            <Body>
-                                <Text style={{ margin: 30 }}>{this.state.description}</Text>
-
-                            </Body>
-                        </CardItem>
-                    </Card>
-
-                    <Card style={{ height: 200 }}>
-                        <CardItem header bordered>
-                            <Text>Phone Number</Text>
-                        </CardItem>
-                        <CardItem cardBody bordered button>
-                            <Body>
-                                <Text style={{ margin: 30,}}>{this.state.phoneNum}</Text>
-
-                            </Body>
-                        </CardItem>
-                    </Card>
-
-                    <Card style={{ height: 200 }}>
-                        <CardItem header bordered>
+                        <CardItem style={{marginTop:30}}>
                             <Text>Address</Text>
                         </CardItem>
                         <CardItem cardBody bordered button>
                             <Body>
-                                <Text style={{ margin: 30 }}>{this.state.address}</Text>
+
+                        <Item>
+                            <Textarea rowSpan={5} colSpan={5} onChangeText={this.setJobDesc} bordered style={styles.startTextBtn} placeholder="Tell something about the job Here" />
+                        </Item>
 
                             </Body>
+
+                           
                         </CardItem>
-                    </Card>
-
-                    <Card style={{ height: 50 }}>
-                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyJob')}>
-                            <Text style={{ justifyContent: 'center', fontSize: 17 }}>Click Here to View Your Uploaded Job</Text>
-                        </CardItem>
-                    </Card>
-                    
-                     <Card style={{ height: 50 }} >
-                        <CardItem header bordered onPress={() => this.props.navigation.navigate('Planning')}>
-
-                            <Text>Buying Plan</Text>
-                        </CardItem>
-                        <CardItem cardBody>
-                        </CardItem>
-{/*                         <CardItem cardBody>
-                            <Content>
-                                {
-                                     this.state.skills &&                      
-                                    this.state.skills.map((p, i) => (
-                                        <ListItem key={i}>
-                                            <Text>
-                                                {p}
-                                            </Text>
-                                        </ListItem>
-                                    )) 
-                                }
-
-                            </Content>
-                        </CardItem> */}
-                    </Card>
-                   
-
-
-
-                    <Card>
-
+                        
                         <Button block primary last style={{ marginTop: 20, marginBottom: 5 }} onPress={() => this.props.navigation.navigate('EditProfileJobCreator')}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', fontFamily: 'montserrat' }}>Edit Profile</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', fontFamily: 'montserrat' }}>Confirm</Text>
                         </Button>
-
                     </Card>
+
+                      
+
 
                 </ScrollView>
 
@@ -345,5 +275,17 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         alignSelf: 'stretch',
         alignItems: 'center',
-    }
+    },
+    startTextBtn: {
+        backgroundColor: 'white',
+        width: 300,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'grey',
+        shadowColor: 'black',
+        margin: 20,
+        elevation: 10
+    },
 })
