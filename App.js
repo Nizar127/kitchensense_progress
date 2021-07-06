@@ -17,7 +17,6 @@ import Login from './Auth/Login'
 import SignUp from './Auth/SignUp'
 import JobCreatorDetail from './screens/JobCreatorDetail'
 import EditProfileJobCreator from './screens/EditProfileEmployer'
-import Search from './screens/Search'
 import Profile from './screens/profile';
 import SplashScreen from './SplashScreen';
 import MyJob from './screens/MyJob';
@@ -33,6 +32,10 @@ import Planner from './screens/planner';
 import PlanLocation from './location/PlanLocation';
 import TestPlan from './screens/testplan';
 import Timestamptest from './screens/timestamptest';
+import NotificationPlanner from './screens/notification_planner';
+import DataPlanner from './screens/dataplanner';
+import NotifyDetails from './screens/notify_details';
+import TestNoti from './screens/testNoti';
 
 function App() {
 
@@ -50,7 +53,6 @@ function App() {
         <Stack.Screen name="JobCreatorDetail" component={JobCreatorDetail}/>
         <Stack.Screen name="PostFood" component={PostFood} />
         <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="EditProfileJobCreator" component={EditProfileJobCreator} />
         <Stack.Screen name="JobProgress" component={JobProgress}/> 
@@ -64,6 +66,11 @@ function App() {
         <Stack.Screen name="PlanLocation" component={PlanLocation}/>
         <Stack.Screen name="TestPlan" component={TestPlan} />
         <Stack.Screen name="Timestamptest" component={Timestamptest} />
+        <Stack.Screen name="DataPlanner" component={DataPlanner} />
+        <Stack.Screen name="NotifyDetails" component={NotifyDetails} />
+        <Stack.Screen name="TestNoti" component={TestNoti} />
+        <Stack.Screen name="NotificationPlanner" component={NotificationPlanner} />
+
 
 
 

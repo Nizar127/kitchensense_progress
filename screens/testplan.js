@@ -94,7 +94,7 @@ export default function(props) {
 
     componentDidMount() {
         const {route} = this.props;
-        this.peopleRef = firestore.collection('Users').where('address', '==', route.params.planLocate);;
+        this.peopleRef = firestore.collection('Users').where('address', '==', route.params.planLocate);
         this.unsubscribe = this.peopleRef.onSnapshot(this.getCollection);
         console.log("testing data:", this.peopleRef);
     
@@ -157,7 +157,45 @@ export default function(props) {
     }
 
     
+    sendNotification = async(id)=>{
 
+        console.log("send_notificaiton")
+        console.log("uid", auth.currentUser.uid)
+                try{
+            
+                    if(true){
+                        firestore.collection('Users').doc(id).get().then((snapshot) =>{
+                        
+                                var expotoken = snapshot.data().push_token;
+                                console.log("expotoken",expotoken)
+                                                      
+            
+                                fetch('https://exp.host/--/api/v2/push/send',
+                                 {
+                                    method: 'POST',
+                                    headers: {
+                                    Accept: 'application/json',
+                                    'Accept-encoding': 'gzip, deflate',
+                                    'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify
+                                    ({
+                                        to: expotoken.data,
+                                        sound: 'default',
+                                        title: 'KitchenSense',
+                                        body: 'Your Have Been Chosen To Do The Plan'
+                                    })
+                                }).then((response)=>{
+                                    console.log(response)
+                                });
+                           
+                        })
+                        
+                    }
+                }catch(error){
+                    console.log(error)
+                }
+              }
 
     
 /*     onMetricSelected(value) {
@@ -281,9 +319,9 @@ export default function(props) {
                         itemname: this.state.itemname,
                         itemDesc: this.state.desc,
                         date_to_buy: this.state.DateDisplay,
-                        //people_inCharge: this.state.buyPeople,
+                        //people_inCharge: thispeople_inChargeID.state.buyPeople,
                         people_inCharge: this.state.People,
-                        people_inChargeID: this.state.peopleID,
+                        people_inChargeID: this.state.People,
                         //people: this.state.selectedMetric,
                         url: this.state.url,
                         //createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -298,8 +336,8 @@ export default function(props) {
                             url 
                         })
                     });
-                    console.log("timestamp",timestamp)
-                     this.sendNotiToUser   //send noti to user   
+                    //console.log("timestamp",timestamp)
+                     this.sendNotiToUser(key.id)   //send noti to user   
                     Alert.alert('Your Job Has Been Posted', 'Please Choose',
                         [
                             {
@@ -615,7 +653,7 @@ export default function(props) {
                                     >
                                   {this.state.buyPeople.map((buyPeople, i) => {
                                         return (
-                                        <Picker.Item label={buyPeople.fullname} value={buyPeople.fullname} key={i} />
+                                        <Picker.Item label={buyPeople.fullname} value={buyPeople.key} key={i} />
                                         );
                                     }
                                 )} 
