@@ -36,7 +36,6 @@ export default class Profile extends Component {
         super();
 
 
-        //firebase.firestore().collection('Users').doc(user.uid).set(user).collection('Job_Creator');
         this.state = {
             users: [],
             username: '',
@@ -83,7 +82,6 @@ export default class Profile extends Component {
             console.log("doc", doc)
         });
       
-        //this.unsubscribe = firebase.firestore().collection('Users').onSnapshot(this.getCollection);
     }
 
     componentWillUnmount() {
@@ -91,44 +89,22 @@ export default class Profile extends Component {
     }
 
 
-
-    setModalVisible = (bool) => {
-        this.setState({ isModalVisible: bool })
-    }
-
-    setInputText = (text) => {
-        this.setState({ inputText: text })
-    }
-
-    setEditedItem = (id) => {
-        this.setState({ editedItem: id })
-    }
-    handleEditItem = (editedItem) => {
-        const newData = this.state.data.map(item => {
-            if (item.id === editedItem) {
-                item.text = this.state.inputText
-                return item
-            }
-            return item
-        })
-        this.setState({ data: newData })
-    }
-    //hide card example
-    ShowHideComponent = () => {
-        if (this.state.show == true) {
-            this.setState({ show: false });
-        } else {
-            this.setState({ show: true });
+    signout = () =>{
+        auth.signOut().then(() =>{
+            Alert.alert('You Have Been Signed Out', 'Please Choose',
+            [
+                {
+                    text: "Return To Main Screen",
+                    onPress: () => this.props.navigation.navigate('SplashScreen')
+                
+                },
+            ], { cancelable: false }
+        )
+        console.log('User signed out!') 
         }
-    };
-
-
-
-
-    updateText = (value) => {
-        this.setState({ myText: value })
+        );
+        
     }
-
 
 
     static navigationOptions = {
@@ -187,10 +163,10 @@ export default class Profile extends Component {
 
                    <Card style={{ height: 100 }}>
                    <CardItem header bordered>
-                            <Text>My Application</Text>
+                            <Text>My Ingredient</Text>
                         </CardItem>
-                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyJob')}>
-                            <Text style={{ margin: 30}}>Click Here to View Your Uploaded Job</Text>
+                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyIngredient')}>
+                            <Text style={{ margin: 30}}>Click Here to View Ingredient</Text>
                         </CardItem>
                     </Card> 
 
@@ -232,45 +208,9 @@ export default class Profile extends Component {
                         </CardItem>
                     </Card>
 
-                    <Card style={{ height: 50 }}>
-                        <CardItem cardBody bordered button onPress={() => this.props.navigation.navigate('MyJob')}>
-                            <Text style={{ justifyContent: 'center', fontSize: 17 }}>Click Here to View Your Uploaded Job</Text>
-                        </CardItem>
-                    </Card>
-                    
-                     <Card style={{ height: 50 }} >
-                        <CardItem header bordered onPress={() => this.props.navigation.navigate('Planning')}>
-
-                            <Text>Buying Plan</Text>
-                        </CardItem>
-                        <CardItem cardBody>
-                        </CardItem>
-{/*                         <CardItem cardBody>
-                            <Content>
-                                {
-                                     this.state.skills &&                      
-                                    this.state.skills.map((p, i) => (
-                                        <ListItem key={i}>
-                                            <Text>
-                                                {p}
-                                            </Text>
-                                        </ListItem>
-                                    )) 
-                                }
-
-                            </Content>
-                        </CardItem> */}
-                    </Card>
-                   
-
-
 
                     <Card>
-
-                        <Button block primary last style={{ marginTop: 20, marginBottom: 5 }} onPress={() => this.props.navigation.navigate('EditProfileJobCreator')}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', fontFamily: 'montserrat' }}>Edit Profile</Text>
-                        </Button>
-
+                        <Button block danger onPress={this.signout}><Text>Logout</Text></Button>
                     </Card>
 
                 </ScrollView>

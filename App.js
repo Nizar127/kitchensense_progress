@@ -7,68 +7,46 @@ import {Container, Button} from 'native-base';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import EmployerProfile from './screens/profile'
 import PostFood from './screens/post_food'
 import ViewJob from './screens/Feed'
-import JobProgress from './screens/job_status'
-//import Home from './Home'
 import Router from './Router';
 import Login from './Auth/Login'
 import SignUp from './Auth/SignUp'
-import JobCreatorDetail from './screens/JobCreatorDetail'
-import EditProfileJobCreator from './screens/EditProfileEmployer'
 import Profile from './screens/profile';
 import SplashScreen from './SplashScreen';
-import MyJob from './screens/MyJob';
-import MyOrderDetail from './screens/MyOrderDetail';
+import MyIngredient from './screens/MyIngredient';
+import MyIngredientDetail from './screens/MyIngredientDetail';
 import { useEffect } from 'react/cjs/react.development';
 import Household from './screens/Household';
-import AddUser from './screens/AddUser';
 import MyLocation from './location/location';
 import UserStartLocation from './location/userStartLocation';
-import AccountDetail from './screens/AccountDetail';
 import AddUserLocation from './location/adduserlocation';
-import Planner from './screens/planner';
 import PlanLocation from './location/PlanLocation';
-import TestPlan from './screens/testplan';
-import Timestamptest from './screens/timestamptest';
+import AddPlaner from './screens/AddPlaner';
 import NotificationPlanner from './screens/notification_planner';
 import DataPlanner from './screens/dataplanner';
-import NotifyDetails from './screens/notify_details';
-import TestNoti from './screens/testNoti';
 
 function App() {
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="splashscreen" component={SplashScreen}/>
+        <Stack.Screen name="SplashScreen" component={SplashScreen}/>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Router" component={Router} />
-        {/* <Stack.Screen name="Home" component={Home}/> */}
         <Stack.Screen name="ViewJob" component={ViewJob} />
-        <Stack.Screen name="MyJob" component={MyJob} />
-        <Stack.Screen name="MyOrderDetail" component={MyOrderDetail} />
-        <Stack.Screen name="EmployerProfile" component={EmployerProfile} />
-        <Stack.Screen name="JobCreatorDetail" component={JobCreatorDetail}/>
+        <Stack.Screen name="MyIngredient" component={MyIngredient} />
+        <Stack.Screen name="MyIngredientDetail" component={MyIngredientDetail} />
         <Stack.Screen name="PostFood" component={PostFood} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="EditProfileJobCreator" component={EditProfileJobCreator} />
-        <Stack.Screen name="JobProgress" component={JobProgress}/> 
         <Stack.Screen name="Household" component={Household}/>
-        <Stack.Screen name="AddUser" component={AddUser}/>
         <Stack.Screen name="UserStartLocation" component={UserStartLocation}/>
         <Stack.Screen name="MyLocation" component={MyLocation}/>
-        <Stack.Screen name="AccountDetail" component={AccountDetail}/>
         <Stack.Screen name="AddUserLocation" component={AddUserLocation}/>
-        <Stack.Screen name="Planner" component={Planner}/>
         <Stack.Screen name="PlanLocation" component={PlanLocation}/>
-        <Stack.Screen name="TestPlan" component={TestPlan} />
-        <Stack.Screen name="Timestamptest" component={Timestamptest} />
+        <Stack.Screen name="AddPlaner" component={AddPlaner} />
         <Stack.Screen name="DataPlanner" component={DataPlanner} />
-        <Stack.Screen name="NotifyDetails" component={NotifyDetails} />
-        <Stack.Screen name="TestNoti" component={TestNoti} />
         <Stack.Screen name="NotificationPlanner" component={NotificationPlanner} />
 
 

@@ -30,11 +30,7 @@ const SplashScreen = ({ navigation }) => {
                     style={styles.logo}
                     resizeMode="stretch"
                 />
-                <Animatable.Text
-                    animation="fadeIn"
-                    style={styles.Maintext}>
-                    Kitchen Sense
-                </Animatable.Text>
+
 
             </View>
             <Animatable.View

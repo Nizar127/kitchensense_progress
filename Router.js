@@ -3,22 +3,17 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import EmployerProfile from './screens/profile';
 import Home from './screens/Feed';
-import PostFood from './screens/post_food';
 import { Ionicons } from '@expo/vector-icons';
-import Planner from './screens/planner';
-import Account from './screens/account';
 import Profile from './screens/profile';
-import Planning from './screens/Planning';
-//import NetworkContext from './Context/context';
-//import {useRoute} from '@react-navigation/native';
+import Planner from './screens/Planner';
+
 
 
 export default function Router() {
-   //getconst addressPass = useRoute();
+   
   return (
-     /*  <NetworkContext.Provider value={addressPass.params.network}>  */
+
  
         <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -31,7 +26,7 @@ export default function Router() {
                   color={color}
                 />
               );
-            } else if (route.name === 'Planning') {
+            } else if (route.name === 'Planner') {
               return (
                 <Ionicons
                   name={'md-add'}
@@ -41,7 +36,7 @@ export default function Router() {
               );
             } else if (route.name === 'Profile'){
               <Ionicons
-                  name={'md-person'}
+                  name={'md-accessibility'}
                   size={size}
                   color={color}
                 />
@@ -53,7 +48,7 @@ export default function Router() {
           inactiveTintColor: 'gray',
         }}>
           <Tab.Screen name="Home" component={Home} /> 
-          <Tab.Screen name="Planning" component={Planning} />
+          <Tab.Screen name="Planner" component={Planner} />
           <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
        /*  </NetworkContext.Provider>  */

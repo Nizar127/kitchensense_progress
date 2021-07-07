@@ -48,7 +48,7 @@ const PlanLocation = ({ navigation }) => {
         setDisplayCurrentAddress(address);
         if (address.length > 0) {
             setTimeout(() => {
-              navigation.navigate('TestPlan', { planLocate: address });
+              navigation.navigate('AddPlaner', { planLocate: address });
              
             }, 2000);
           }

@@ -14,9 +14,9 @@ import {
     Text,
     Left,
     Body,
-    //Icon,
     Item,
     Label,
+    Icon,
     Input,
     Separator,
     Button,
@@ -24,7 +24,7 @@ import {
     Picker,
     Textarea
 } from 'native-base';
-import Icon from 'react-native-vector-icons/Ionicons'
+// import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView } from 'react-native-gesture-handler';
 import {auth, firestore, storage} from '../config/Firebase';
 import { KeyboardAvoidingViewBase } from 'react-native';
@@ -36,10 +36,6 @@ export default class DataPlanner extends Component {
 
     constructor() {
         super();
-        //const network = React.useContext(NetworkContext);
-        //this.applicationRef = firestore.collection('Hiring').where('jobCreatorID', '==', auth.currentUser.uid);
-      /* .doc(auth().currentUser.uid).get().where('jobCreatorID', '==', auth().currentUser.uid); */
-        //this.hiringRef = firestore.collection('Job_Hired');
 
         this.state = {
             planner: [],
@@ -64,7 +60,9 @@ export default class DataPlanner extends Component {
 
 
     componentDidMount() {
-        this.plannerRef = firestore.collection('Planner').where('people_InCharge', '==', auth.currentUser.uid)/* .where('people_inChargeID' == auth.currentUser.uid) */;
+        //.where('people_InCharge', '==', auth.currentUser.uid)
+        //above is the code originally used to only called to particular people
+        this.plannerRef = firestore.collection('Planner');
         this.unsubscribe = this.plannerRef.onSnapshot(this.getCollection);
         console.log('plannerref', this.plannerRef);
     } 
@@ -102,6 +100,7 @@ export default class DataPlanner extends Component {
                 pic,
                 people_InCharge,
             });
+            console.log("pic",planner)
         });
         this.setState({
             planner,
@@ -123,41 +122,42 @@ export default class DataPlanner extends Component {
             <Container>
 
                 <Content >
-                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>List of Ingredient</Text>
-                    <View style={{ flex: 1, /* backgroundColor: '#292D5C' */ shadowColor: 'white', backgroundColor: '#242836' }}>
+                    <View style={{flex: 1, flexDirection:'row'}}>
+                    <Icon ios='ios-menu' android="md-arrow-back" style={{fontSize: 24, marginTop:20, marginStart:10, marginEnd:30, color: 'black'}} onPress={() => this.props.navigation.navigate('Planner')}/>
+
+                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Current Planner</Text>
+                    </View>
+             
+                    <View style={{ flex: 1,  shadowColor: 'white', backgroundColor: '#242836' }}>
                     <FlatList
                             data={this.state.planner}                            
                             
                             renderItem={({ item, index }) => {
                                 return (
-                                            <View>
+                                    <Container style={{backgroundColor: '#242836'}}>
+                                          
                                             <Card key={index} style={Style.card} >
                                                 <CardItem header bordered style={{ flexDirection: 'row' }}>
                                                     <Text>{item.name_item}</Text>
                                                 </CardItem>
                                                 <CardItem>
-                                                    <Image style={{height: 200}} source={{uri:item.pic}}/>
+                                                    <Image style={{flex:1, height:200}} source={{uri: item.pic}}/>
                                                 </CardItem>
                                                 <CardItem>
                                                     <Left>
                                                         <Thumbnail source={{uri: item.PersonPicture}}/>
+                                                        <Text style={{marginBottom:10, marginTop:10,marginEnd: 20, padding: 20}}>{item.PersonName}</Text>
                                                     </Left>
-                                                    <Body>
-                                                        <Text>{item.PersonName}</Text>
-                                                    </Body>
+                                                    <Body></Body>                                                    
                                                 </CardItem>
-                                                <CardItem>
-                                                    <Body>
-                                                        <View style={{ flexDirection:'row', alignItems: 'center'}}>
-                                                            <Text style={{paddingEnd:10}}>{item.itemDesc}</Text>
-                                                            
-                                                        </View>
-                                                    </Body>
+                                                <CardItem>                                                   
+                                                    <Text>{item.Desc_item}</Text>  
+
                                                 </CardItem>
                                                 <CardItem style={{margin: 7,  flexDirection: 'column'}}>
                                                     <Body>
                                                         <Right>
-                                                            <Text style={{paddingEnd:10}}>Date To Buy: </Text>
+                                                            <Text style={{paddingEnd:40}}>Date To Buy: </Text>
                                                             <Text>
                                                                 {item.date}
                                                             </Text>
@@ -165,7 +165,8 @@ export default class DataPlanner extends Component {
                                                     </Body>
                                                 </CardItem>
                                             </Card>
-                                            </View>
+                                           
+                                </Container>
                                 )
                             }}
                         />
@@ -173,21 +174,6 @@ export default class DataPlanner extends Component {
 
                 </Content>
 
-                <Fab 
-                style={{ backgroundColor: '#031CDD', borderRadius: 50, }} 
-                direction="up"
-                position="bottomRight"
-                onPress={() => this.setState({ active: !this.state.fabActive })}>
-                <Icon name="md-add-outline" />
-                     <Button style={{ width:60, height: 50,  backgroundColor: '#34A34F' }}   onPress={() => this.props.navigation.navigate('PostFood')}>
-                        <Icon name="ios-add-circle-outline" style={{ color: '#ffffff', fontSize: 30}} />
-                      </Button>
-                      <Button style={{ width:60, height: 50, backgroundColor: '#3B5998', marginBottom: 30, marginEnd: 30}} onPress={() => this.props.navigation.navigate('PlanLocation')}>
-                        <Icon name="person-add" style={{ color: '#ffffff', fontSize: 30}}/>
-                      </Button>
-                    
-
-                </Fab>
 
             </Container >
         );

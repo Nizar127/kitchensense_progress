@@ -37,16 +37,16 @@ const SIZE = 80;
 export default function(props) {
     const route = useRoute();
   
-    return <Planner {...props} route={route} />;
+    return <AddPlaner {...props} route={route} />;
   }  
   
 
- class Planner extends Component {
+ class AddPlaner extends Component {
     constructor() {
         super();
 
         //const user = firebase.auth().currentUser;
-        this.plannerRef = firestore.collection('Planner');
+        this.plannerRef = firestore.collection('Notifications_Planner');
         this.state = {
             currentUser: null,
             userID: null,
@@ -55,21 +55,29 @@ export default function(props) {
             email:'',
             uniqueId: '',
             jobdesc: '',
+            desc:'',
+            thisuserid:'',
             url: '',
             worktype: '',
             salary: '',
-            peoplenum: '',    
-            qualification:'',
             ingredientname:'',
             quantity:'',
             buyPeople:[],
             People:'',
             alert:'',
-            experience:'',
             isLoading: false,
             uploading: false,
             DateDisplay:'',
             visibility: false,
+            initialuid: null,
+            orderedMan: '',
+            peopleID:'',
+            orderedLocation: '',
+            userPicture: '',
+            userEmail:'',
+            userPhoneNum:'',
+            //dateadded:new now(),
+            userDescription:''
 
         };
         this.setDate_Start = this.setDate_Start.bind(this);
@@ -77,7 +85,8 @@ export default function(props) {
 ;
         this.pickImage = this.pickImage.bind(this);
         this.onUserSelected = this.onUserSelected.bind(this);
-        this.saveData = this.saveData.bind(this);
+        //this.saveData = this.saveData.bind(this);
+        this.HireWorking = this.HireWorking.bind(this);
 
 
 
@@ -89,16 +98,25 @@ export default function(props) {
         this.unsubscribe = this.peopleRef.onSnapshot(this.getCollection);
         console.log("testing data:", this.peopleRef);
     
-        var user = auth.currentUser;
-        var name, uid;
+         var user = auth.currentUser;
+        let name, uid;
         if (user != null) {
             name = user.displayName;
             uid = user.uid;
         }
 
+        //get the fullname from users based on userid (unfinished)
+        let peopleID = firestore.collection('Users').get().then((snapshot)=>{
+            snapshot.foreach((username)=>{
+                fullname;
+            })
+        });
+        
+
         const { currentUser } = auth;
         this.setState({ currentUser });
-        this.state.userID = currentUser.uid;
+        this.state.userID = currentUser.uid; 
+
         //this.setState({ jobCreaterName: currentUser.displayName })  
     
     }
@@ -140,6 +158,51 @@ export default function(props) {
 
 
 
+      //send to all users
+      sendNotificationToAllUsers = async () => {
+        const users = await firestore.collection('Users').get();
+        users.docs.map((user) =>this.sendNotification(user.data().expoToken));
+    } 
+    
+    sendNotification = async()=>{
+
+    console.log("send_notificaiton")
+    console.log("uid", auth.currentUser.uid)
+        try{
+    
+            if(true){
+                firestore.collection('Users').get().then((snapshot) =>{
+                    snapshot.forEach((childSnapshot) =>{
+                        var expotoken = childSnapshot.data().push_token;
+                        console.log("expotoken",expotoken)
+                                              
+    
+                        fetch('https://exp.host/--/api/v2/push/send',
+                         {
+                            method: 'POST',
+                            headers: {
+                            Accept: 'application/json',
+                            'Accept-encoding': 'gzip, deflate',
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify
+                            ({
+                                to: expotoken.data,
+                                sound: 'default',
+                                title: 'KitchenSense',
+                                body: 'You Have Been Chosen To Be The Planner '
+                            })
+                        }).then((response)=>{
+                            console.log(response)
+                        });
+                    })
+                })
+                
+            }
+        }catch(error){
+            console.log(error)
+        }
+      }
     
 /*     onMetricSelected(value) {
         this.setState({
@@ -177,10 +240,109 @@ export default function(props) {
     };
 
 
+//initial plan to send information to users
+/* NotiItem = () =>{
+    return (
+        <View>
+            <Card>
+                <CardBody style={{padding:10}}>
+                    <Text style={{marginBottom:10}}>Item: {this.state.itemname}</Text>
+                    <Text>You Have Been Suggested To Buy Ingredient</Text>
+                    <Text>Check Out The Planner</Text>
+                </CardBody>
+                <CardItem>
+                    <View style={{flex: 1, flexDirection:'row'}}>
+                        <Button success><Text>Accept</Text></Button>
+                        <Button danger><Text>Reject</Text></Button>
+                    </View>
+                </CardItem>
+            </Card>
+        </View>
+    )
+} */
+
+
+    HireWorking = async() =>{
+        //console.log("text_id", id);
+
+        let dbref = firestore.collection('Users').doc(auth.currentUser.uid).get();
+        dbref.then(doc => {
+            this.setState({
+                ...this.state,
+                orderedMan: doc.get('fullname'),
+                userEmail: doc.get('email'),
+                userPicture: doc.get('url'),
+                userDescription: doc.get('description'),
+                userPhoneNum: doc.get('phoneNum')
+            }, () => {
+
+                console.log("state", this.state)
+                console.log("auth.currentUser", auth.currentUser)
+                console.log("orderedman", this.state.orderedMan)
+                console.log("userPicture", this.state.userPicture)
+                console.log("initialID", this.state.thisuserid)
+                console.log("userDescription", this.state.userDescription)
+                console.log("userPhoneNum",this.state.userPhoneNum)
+                console.log("orderedEmail", this.state.userEmail)
+
+                if (this.state.userID &&  this.state.desc &&this.state.itemname && this.state.DateDisplay && this.state.People && this.state.url) {
+                    this.plannerRef.add({
+                        orderedId: auth.currentUser.uid,
+                        orderedMan: this.state.orderedMan,
+                        userPicture: this.state.userPicture,
+                        orderedEmail: this.state.userEmail,
+                        orderDescription: this.state.userDescription,
+                        orderManPhoneNum: this.state.userPhoneNum,
+                        itemname: this.state.itemname,
+                        itemDesc: this.state.desc,
+                        date_to_buy: this.state.DateDisplay,
+                        people_inCharge: this.state.People,
+                        people_inChargeID: this.state.People,
+                        url: this.state.url,
+                        //createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then((res) => {
+                        console.log("[saveData] Done add to firebase", res);
+
+                        this.setState({
+                            itemname,
+                            itemDesc,
+                            date_to_buy,
+                            people_inCharge,
+                            url 
+                        })
+                    });
+                    //console.log("timestamp",timestamp)
+                      //send noti to user   
+                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
+                        [
+                            {
+                                text: "Return To Main Screen",
+                                onPress: () => this.props.navigation.navigate('Home')
+                            },
+                            {
+                                text: "View Current Job Posted",
+                                onPress: () => this.props.navigation.navigate('Profile'),
+                            }
+                        ], { cancelable: false }
+                    )
+                }else{
+                    Alert.alert('Empty Field')
+                }
+            });
+
+        });
+
+    }
+
+
     setUserID = (value) => {
         this.setState({ userID: value });
 
     }
+
+    setDesc = (value) => {
+        this.setState({desc: value});
+     }
 
     setEmail = (value) => {
         this.setState({ email: value });
@@ -220,6 +382,7 @@ export default function(props) {
     }
 
 
+//this part to load image into empty view
 
     _maybeRenderUploadingOverlay = () => {
         if (this.state.uploading) {
@@ -238,6 +401,8 @@ export default function(props) {
           );
         }
       };
+
+      //get the image here
 
     _maybeRenderImage = () => {
         let { url } = this.state;
@@ -319,61 +484,8 @@ export default function(props) {
     
     }
 
-    saveData = async() => {
-        console.log("state", this.state)
-        console.log("usedID", this.state.userID)
-        console.log("itemname", this.state.itemname)
-        console.log("date", this.state.DateDisplay)
-        console.log("people", this.state.People)
-        console.log("url", this.state.url)
-
-        if (this.state.userID && this.state.itemname && this.state.DateDisplay && this.state.People && this.state.url) {
-            if (isNaN(this.state.salary && this.state.peoplenum)) {
-                Alert.alert('Status', 'Invalid Figure!');
-            }
-            else {
-                //await auth.currentUser.uid.then(doc =>{
-                    
-                    this.plannerRef.add({
-                        uid: auth.currentUser.uid,
-                        itemname: this.state.itemname,
-                        date_to_buy: this.state.DateDisplay,
-                        //people_inCharge: this.state.buyPeople,
-                        people_inCharge: this.state.People,
-                        //people: this.state.selectedMetric,
-                        url: this.state.url,
-                        
-                    }).then((res) => {
-                        console.log("[saveData] Done add to firebase", res);
-
-                        this.setState({
-                            itemname,
-                            date_to_buy,
-                            people_inCharge,
-                            url 
-                        })
-                    });
-                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
-                        [
-                            {
-                                text: "Return To Main Screen",
-                                onPress: () => this.props.navigation.navigate('Home')
-                            },
-                            {
-                                text: "View Current Job Posted",
-                                onPress: () => this.props.navigation.navigate('Profile')
-                            }
-                        ], { cancelable: false }
-                    );
-           // })
-        }
-        } else {
-            Alert.alert('Status', 'Empty Field(s)!');
-        }
-    }
 
     render() {
-        //const { modalVisible } = this.state;
         if (this.state.isLoading) {
             return (
                 <View style={styles.preloader}>
@@ -390,6 +502,15 @@ export default function(props) {
                     <Item style={styles.inputGroup} fixedLabel last>
                             <Label>Things to Buy</Label>
                             <Input style={styles.startRouteBtn} onChangeText={this.setItemName} />
+                        </Item>
+
+                        <Item style={styles.inputGroup} fixedLabel last>
+                            <Label>Item Description</Label>
+                            
+                        </Item>
+
+                        <Item fixedLabel last>
+                            <Textarea rowSpan={5} style={styles.startRouteBtn} onChangeText={this.setDesc} />
                         </Item>
 
                         <View style={{marginBottom: 20, flexDirection: 'row', justifyContent: 'center' }}>
@@ -429,7 +550,6 @@ export default function(props) {
 
                     </Item>
 
-
                         <Item style={styles.inputGroup} fixedLabel last>
                             <Label>Who Will Buy</Label>
                             <Form>
@@ -453,7 +573,7 @@ export default function(props) {
                                     >
                                   {this.state.buyPeople.map((buyPeople, i) => {
                                         return (
-                                        <Picker.Item label={buyPeople.fullname} value={buyPeople.fullname} key={i} />
+                                        <Picker.Item label={buyPeople.fullname} value={buyPeople.key} key={i} />
                                         );
                                     }
                                 )} 
@@ -468,9 +588,15 @@ export default function(props) {
 
                     </Form>
 
-                    <Button block success last style={{ marginTop: 50 }} onPress={this.saveData.bind(this)}>
+
+                    <Button block success last style={{ marginTop: 50 }} onPress={this.HireWorking.bind(this)}>
                         <Text style={{ fontWeight: "bold" }}>Done</Text>
                     </Button>
+
+                    <Button block primary last style={{ marginTop: 50 }} onPress={() => this.sendNotificationToAllUsers()} >
+                        <Text style={{ fontWeight: "bold" }}>Send Notification To All</Text>
+                    </Button>
+
                 </Content>
 
             </Container>

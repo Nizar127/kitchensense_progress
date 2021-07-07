@@ -145,17 +145,31 @@ console.disableYellowBox = true;
     };
 
 
-    handleLongPress = ( )=> {
+    openTwoButtonAlert=()=>{
         Alert.alert(
-            'Status',
-            'Are you sure you want to delete this student?',
-            [
-              { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-              { text: 'OK', onPress: () => this.deleteUser(address) }
-            ],
-            { cancelable: false }
-          );
-    }
+          'Delete Item',
+          'Are you sure?',
+          [
+            {text: 'Yes', onPress: () => this.deleteUser()},
+            {text: 'No', onPress: () => console.log('No item was removed'), style: 'cancel'},
+          ],
+          { 
+            cancelable: true 
+          }
+        );
+      }
+
+            //if cancel than here
+            deleteUser() {
+                const dbRef = firestore.collection('Users').doc(this.state.key)
+                  dbRef.delete().then((res) => {
+                      console.log('Item removed from database', res)
+                      this.props.navigation.navigate('Planning');
+        
+                  })
+                  
+              } 
+
 
     updateText = (value) => {
         this.setState({ myText: value })
@@ -224,10 +238,10 @@ console.disableYellowBox = true;
                                  
                                 </View>
                                 <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
-                                    <Button light>
+                                    <Button light onPress={() => this.props.navigation.navigate('Profile')}>
                                         <Text>Cancel</Text>
                                     </Button>
-                                    <Button danger iconRight>
+                                    <Button danger iconRight onPress={this.openTwoButtonAlert}>
                                         <Text>Delete</Text>
                                         <Icon name="md-trash-outline"/>
                                     </Button>

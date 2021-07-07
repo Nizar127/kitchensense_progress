@@ -36,10 +36,6 @@ export default class Home extends Component {
 
     constructor() {
         super();
-        //const network = React.useContext(NetworkContext);
-        //this.applicationRef = firestore.collection('Hiring').where('jobCreatorID', '==', auth.currentUser.uid);
-      /* .doc(auth().currentUser.uid).get().where('jobCreatorID', '==', auth().currentUser.uid); */
-        //this.hiringRef = firestore.collection('Job_Hired');
 
         this.state = {
             food: [],
@@ -69,74 +65,26 @@ export default class Home extends Component {
             fabActive:false,
             
         };
-       // this.selectWorkTime = this.selectWorkTime.bind(this);
-        //this.setDate_Start = this.setDate_Start.bind(this);
-        //this.setDate_End = this.setDate_End.bind(this);
+
 
     }
 
 
 
     componentDidMount() {
+        //how to retrieve data
         this.feedRef = firestore.collection('IngredientList');
         this.unsubscribe = this.feedRef.onSnapshot(this.getCollection);
-        //this.currentUser = await auth.currentUser;
-      //  await this.registerForPushNotificationsAsync();
+
 
     } 
 
-    sendPushNotificationOnQty = () => {
-        let lowqty = firestore.collection('Ingredient').doc().onSnapshot(doc=>{
-            //console.log(doc);
-            const{quantity} = doc.data();
-            this.setState({quantity})
-            console.log("qty",doc)
-            //itemname = item.itemname;
-        })
-
-        // this is for sending notification if quanity low than 100
-        try{
-
-            if(lowqty === "100"){
-                firestore.collection('Users').doc(auth.currentUser.uid).get().then((snapshot) =>{
-                    snapshot.foreach((childSnapshot) =>{
-                        var expotoken = childSnapshot.val().expoToken;
-                        let response = fetch('https://exp.host/--/api/v2/push/send',
-                         {
-                            method: 'POST',
-                            headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify
-                            ({
-                                to: expotoken,
-                                sound: 'default',
-                                title: 'Kitchen Sense',
-                                body: 'This item has been in Low Quantity.'
-                            })
-                        });
-                    })
-                })
-                
-            }
-        }catch(error){
-            console.log(error)
-        }
-
-        //for  receiving expiry date 
-
-
-           
-      };
-
-
-     
 
     componentWillUnmount() {
         this.unsubscribe();
     }
 
+    //get querysnapshot from firestore
     getCollection = (querySnapshot) => {
         const food = [];
         querySnapshot.forEach((res) => {
@@ -145,7 +93,7 @@ export default class Home extends Component {
                 ingredientname,
                 ingredientDesc,
                 quantity,
-                date_bought,
+                expiry_Date,
                 ExpiryReceived,
                 alert,
                 url
@@ -157,58 +105,20 @@ export default class Home extends Component {
                 ingredientname,
                 ingredientDesc,
                 quantity,
-                date_bought,
+                expiry_Date,
                 ExpiryReceived,
                 alert,
                 url
             });
+            console.log("food",food)
         });
         this.setState({
             food,
             isLoading: false
         })
     }
-    onCancel() {
-        this.TimePicker.close();
-    }
-
-    onConfirm(hour, minute) {
-        this.setState({ time: `${hour}:${minute}` });
-        this.TimePicker.close();
-    }
-
-    displayModal(show) {
-        this.setState({ isVisible: show })
-        
-    }
 
 
-    setTask = (value) => {
-        this.setState({ ...this.state, task: value })
-    }
-
-
-    static navigationOptions = {
-        title: 'Hire',
-
-        tabBarIcon: ({ tintColor }) => (
-            <Icon name="md-briefcase" style={{ color: tintColor, fontSize: 20 }} />
-        ),
-        headerTitle: {
-            title: 'GET-THE-JOB'
-        },
-
-        headerStyle: {
-            backgroundColor: '#f45fff',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold',
-        },
-
-
-
-    }
 
     render() {
 
@@ -217,15 +127,15 @@ export default class Home extends Component {
 
                 <Content >
                     <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>List of Ingredient</Text>
-                    <View style={{ flex: 1, /* backgroundColor: '#292D5C' */ shadowColor: 'white', backgroundColor: '#242836' }}>
+                    <View style={{ flex: 1, shadowColor: 'white', backgroundColor: '#242836' }}>
                     <FlatList
                             data={this.state.food}                            
                             contentContainerStyle={{ justifyContent:'space-around' }}
                             numColumns={2}
                             renderItem={({ item, index }) => {
                                 return (
-                                    <SafeAreaView>
-                                        <ScrollView>
+                              
+                                        <Container>
                                             <View>
                                             <Card key={index} style={Style.card} >
                                                 <CardItem header bordered style={{ flexDirection: 'row' }}>
@@ -235,32 +145,30 @@ export default class Home extends Component {
                                                     <Thumbnail source={{uri: item.url}}/>
                                                 </CardItem>
                                                 <CardItem>
-                                                    <Body>
+                                                    
                                                         <View style={{ flexDirection:'row', alignItems: 'center'}}>
+                                                            <Text style={{paddingEnd:10}}>Qty:</Text>
                                                             <Text style={{paddingEnd:10}}>{item.quantity}</Text>
                                                             <Text>gram</Text>
                                                         </View>
-                                                    </Body>
+                                                    
                                                 </CardItem>
-                                                <CardItem style={{margin: 7,  flexDirection: 'column'}}>
-                                                    <Body>
-                                                        <Right>
-                                                            <Text>
-                                                                {item.date_bought}
-                                                            </Text>
-                                                        </Right>
-                                                    </Body>
-                                                    <Body>
-                                                        <Text>
-                                                            {item.alert}
-                                                        </Text>
-                                                    </Body>
-                                                </CardItem>
+                                                <CardItem>
+                                                    
+                                                    <View style={{ flexDirection:'column', alignItems: 'center'}}>
+                                                        <Text style={{paddingEnd:10}}>Expiry Date</Text>
+                                                        <Text style={{paddingTop:10}}>{item.expiry_Date}</Text>
+                                                        
+                                                    </View>
+                                                
+                                            </CardItem>
+
+
                                             </Card>
                                             </View>
 
-                                        </ScrollView>
-                                    </SafeAreaView>
+                                       </Container>
+                                   
                                 )
                             }}
                         />
@@ -281,7 +189,6 @@ export default class Home extends Component {
                         <Icon name="person-add" style={{ color: '#ffffff', fontSize: 30}}/>
                       </Button>
                     
-
                 </Fab>
 
             </Container >
@@ -328,6 +235,7 @@ const Style = StyleSheet.create({
         margin: 10,
         padding:10, 
         maxWidth:200, 
+        
         
     },
     text: {
