@@ -36,10 +36,7 @@ export default class NotificationPlanner extends Component {
 
     constructor() {
         super();
-        //const network = React.useContext(NetworkContext);
-        //this.applicationRef = firestore.collection('Hiring').where('jobCreatorID', '==', auth.currentUser.uid);
-      /* .doc(auth().currentUser.uid).get().where('jobCreatorID', '==', auth().currentUser.uid); */
-        //this.hiringRef = firestore.collection('Job_Hired');
+
 
         this.state = {
             notify: [],
@@ -70,21 +67,17 @@ export default class NotificationPlanner extends Component {
             
         };
         this.AcceptJob = this.AcceptJob.bind(this);
-       // this.selectWorkTime = this.selectWorkTime.bind(this);
-        //this.setDate_Start = this.setDate_Start.bind(this);
-        //this.setDate_End = this.setDate_End.bind(this);
 
     }
 
 
 
     componentDidMount() {
-
-        this.notifyRef = firestore.collection('Notifications_Planner').where('people_inChargeID', '==', auth.currentUser.uid) //* .where('people_inChargeID' == auth.currentUser.uid) */;
+         //.where('people_InCharge', '==', auth.currentUser.uid)
+        //above is the code originally used to only called to particular people
+        this.notifyRef = firestore.collection('Notifications_Planner')/* .where('people_inChargeID', '==', auth.currentUser.uid) */ //* .where('people_inChargeID' == auth.currentUser.uid) */;
         this.unsubscribe = this.notifyRef.onSnapshot(this.getCollection);
         this.plannerRef = firestore.collection('Planner');
-        //this.currentUser = await auth.currentUser;
-      //  await this.registerForPushNotificationsAsync();
 
     } 
 
@@ -139,10 +132,7 @@ export default class NotificationPlanner extends Component {
     }
 
 
-    displayModal(show) {
-        this.setState({ isVisible: show })
-        
-    }
+
 
     AcceptJob = async(id) =>{
         console.log("text_id", id);
@@ -189,29 +179,18 @@ export default class NotificationPlanner extends Component {
                         //createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     }).then((res) => {
                         console.log("[saveData] Done add to firebase", res);
-                            
-    /*                         this.setState({
-                            itemname,
-                            itemDesc,
-                            date_to_buy,
-                            people_inCharge,
-                            url 
-                        }) */
+                        
                     });
-                    //once done add to database, delete from notification planner
-        
-                    //console.log("timestamp",timestamp)
-                     //this.sendNotiToUser   //send noti to user   
-                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
+                    Alert.alert('Your new planner has been posted', 'Please Choose',
                         [
                             {
                                 text: "Return To Main Screen",
                                 onPress: () => this.props.navigation.navigate('Home')
                             },
                             {
-                                text: "View Current Job Posted",
-                                onPress: () => this.props.navigation.navigate('Profile')
-                            }
+                                text: "View Current Planner",
+                                onPress: () => this.props.navigation.navigate('Planner')
+                            },
                         ], { cancelable: false }
                     )
                 }else{
@@ -256,13 +235,7 @@ export default class NotificationPlanner extends Component {
           
       } 
 
-      tryingKey = () =>{
-        firestore.collection('Notifications_Planner').orderBy('date_to_buy').get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log(doc.id);
-            });
-        });
-      }
+
 
       openTwoButtonAlert=()=>{
         Alert.alert(
@@ -278,19 +251,7 @@ export default class NotificationPlanner extends Component {
         );
       }
 
-      testShit =()=>{
-        var user = auth.currentUser;
-        var userTest = auth.currentUser.uid;
-        let name, uid;
-        if (user != null) {
-            name = user.displayName;
-            uid = user.uid;
-        }
 
-        console.log("usertest", userTest)
-        
-
-      }
 
 
     render() {
@@ -299,13 +260,9 @@ export default class NotificationPlanner extends Component {
             <Container>
 
                 <Content >
-                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>List of Ingredient</Text>
+                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>New Notifications</Text>
                     <View style={{ flex: 1, /* backgroundColor: '#292D5C' */ shadowColor: 'white', backgroundColor: '#242836' }}>
-{/*                     <Button style={{margin:10, width: 100}} success onPress={this.testShit}>
-                                                            <Text>Check User</Text>
-                                                        </Button> */}
-                <Button style={{margin:10}} success onPress={() => this.sendPushNotification()}><Text>Send Notification</Text></Button>
-                {/* <Button style={{margin:10}} success onPress={this.tryingKey}><Text>Test Key</Text></Button> */}
+                <Button style={{margin:10}} success onPress={() => this.props.navigation.navigate('DataPlanner')}><Text>Send Notification</Text></Button>
 
                     <FlatList
                             data={this.state.notify}                            
@@ -313,7 +270,7 @@ export default class NotificationPlanner extends Component {
                             renderItem={({ item, index }) => {
                                 return (
                                     <Container style={{ backgroundColor: '#242836'}}>
-                                            <View>
+                                            <ScrollView>
                                             <Card key={index} style={{ padding:10}}>
                                             <CardItem>
                                                 <Left>
@@ -324,15 +281,15 @@ export default class NotificationPlanner extends Component {
                                                     <Text note>{item.itemDesc}</Text>
                                                 </Body>
                                                 <Right>
-                                                    <Text note>3:43 pm</Text>
+                                                    <Text note>{item.date_to_buy}</Text>
                                                 </Right>
                                                 </CardItem>
                                                 <CardItem>
                                                 <View style={{ marginBottom:15,  flexDirection: 'row', padding: 10, justifyContent: 'space-between'}}>
-                                                        <Button style={{margin:10, width: 100}} success onPress={()=> this.AcceptJob(item.key)}>
+                                                        <Button style={{margin:10}} success onPress={()=> this.AcceptJob(item.key)}>
                                                             <Text>Accept</Text>
                                                         </Button>
-                                                        <Button  style={{margin:10, width: 80}} danger onPress={this.openTwoButtonAlert} >
+                                                        <Button  style={{margin:10}} danger onPress={this.openTwoButtonAlert} >
                                                             <Text>Reject</Text>
                                                         </Button>
                                                     </View>
@@ -340,7 +297,7 @@ export default class NotificationPlanner extends Component {
 
                                             </Card>
 
-                                            </View>
+                                            </ScrollView>
 
                                        
                                     </Container>

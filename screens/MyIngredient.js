@@ -5,12 +5,10 @@ import { Container, Content, Footer, FooterTab, Button, Icon, Text, List, ListIt
 import {auth, firestore, storage,db} from '../config/Firebase';
 
 
-//let job = db.ref('/Job');
 
-export default class MyJob extends Component {
+export default class MyIngredient extends Component {
     constructor() {
         super();
-        //this.applicationRef = firestore.collection('IngredientList').where('uid', '==', auth.currentUser.uid);
         this.state = {
             isLoading: true,
             jobs: []
@@ -21,16 +19,10 @@ export default class MyJob extends Component {
 
 
     componentDidMount() {
+        //check data belong to you only
         this.applicationRef = firestore.collection('IngredientList').where('uid', '==', auth.currentUser.uid);
         this.unsubscribe = this.applicationRef.onSnapshot(this.getCollection);
-        // job.on('value', (snapshot) => {
-        //   let data = snapshot.val();
-        //   if (data) {
-        //     let firebaseData = Object.values(data);
-        //     this.setState({ jobs: firebaseData });
-        //     console.log(this.state.jobs);
-        //   }
-        // });
+
     }
 
 
@@ -91,7 +83,7 @@ export default class MyJob extends Component {
                 </Header>
 
                 <Content padder>
-                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Job List</Text>
+                    <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Ingredient List</Text>
                     <FlatList
                         data={this.state.jobs}
                         style={{padding:10}}
@@ -100,12 +92,12 @@ export default class MyJob extends Component {
                                 <ListItem key={index}
                                     // onLongPress={(jobname) => { this.deleteConfirmation(jobname) }}
                                     onPress={() => {
-                                        this.props.navigation.navigate('MyOrderDetail', {
+                                        this.props.navigation.navigate('MyIngredientDetail', {
                                             userkey: item.key
                                         });
                                     }}>
                                     <Left>
-                                        <Text>{item.jobname}</Text>
+                                        <Text>{item.ingredientname}</Text>
                                     </Left>
                                     <Right>
                                         <Icon name="arrow-forward" />
@@ -114,36 +106,16 @@ export default class MyJob extends Component {
                             )
                         }}
                     />
-
-
-                    {/* <List vertical={true}>
-            <JobList jobs={this.state.jobs}
-
-              onPress={(uniqueId, jobName, jobdesc, worktype, salary, peoplenum, chosenDate, location) => {
-                this.props.navigation.navigate('MyOrderDetail',
-                  {
-                    jobName: jobName,
-                    uniqueId: uniqueId,
-                    jobdesc: jobdesc,
-                    worktype: worktype,
-                    salary: salary,
-                    peoplenum: peoplenum,
-                    chosenDate: chosenDate,
-                    location: location
-                  });
-              }}
-              onLongPress={(uniqueId) => { this.deleteConfirmation(uniqueId) }} />
-          </List> */}
-                    <Text>{this.state.salary}</Text>
+ 
                 </Content>
 
 
 
                 <Footer>
                     <FooterTab>
-                        <Button vertical onPress={() => { this.props.navigation.navigate('PostJob') }}>
+                        <Button vertical onPress={() => { this.props.navigation.navigate('PostFood') }}>
                             <Icon name="md-briefcase" />
-                            <Text>New Job</Text>
+                            <Text>New Ingredient</Text>
                         </Button>
                     </FooterTab>
                 </Footer>

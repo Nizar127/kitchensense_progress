@@ -3,48 +3,13 @@ import React, { Component } from 'react';
 import { Alert, View, Image, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { Container, auto, Content, Footer, FooterTab, Body, Button, Icon, Text, List, Header, Card, CardItem, ListItem } from 'native-base';
 import {auth, firestore, db} from '../config/Firebase'
+import * as Notifications from 'expo-notifications';
 //import JobList from '../../components/chat/JobList';
 
 const { width, height } = Dimensions.get('window')
 
-/* sendNotification = async()=>{
 
-    console.log("send_notificaiton")
-    console.log("uid", auth.currentUser.uid)
-            try{
-         */
-                if(true){
-                    firestore.collection('IngredientList').get().then((snapshot) =>{
-                        snapshot.forEach((childSnapshot) =>{
-                            var expiry = childSnapshot.data().expiry_Date;
-                            console.log("expotoken",expiry)
-                            var dateEnd = new Date(Date.now() + 3* 24 * 60 * 60 * 1000);
-
-                            if(expiry == dateEnd){
-                                const trigger = new Date(Date.now() + 3* 24 * 60 * 60 * 1000);
-                                trigger.setMinutes(0);
-                                trigger.setSeconds(0);
-                                
-                                Notifications.scheduleNotificationAsync({
-                                    content: {
-                                        title: 'This Item Will Expired in 3 days',
-                                    },
-                                    trigger,
-                                })
-                            }
-
-
-                                                  
-                        })
-                    })
-                    
-                }
-/*             }catch(error){
-                console.log(error)
-            }
-          }
- */
-export default class MyOrderDetail extends Component {
+export default class MyIngredientDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -72,6 +37,9 @@ export default class MyOrderDetail extends Component {
     }
 
     componentDidMount() {
+        //get data from previous page
+        //we call the whole data first using get() n then check data exist,
+        //if exist, retrieve whole data hence res.data() then use setState to re used all the previous data from previous page
         const detailRef = firestore.collection('IngredientList').doc(this.props.route.params.userkey);
         detailRef.get().then((res) => {
             if (res.exists) {
@@ -93,7 +61,8 @@ export default class MyOrderDetail extends Component {
             }
         })
         
-        let weightRef = db.ref('/quantity');
+        //retrieve data from realtime database (Arduino part)
+        let weightRef = db.ref('/weight');  //database // use realtime changes get hence .on('value')
         weightRef.on('value', (snapshot) => {
             let data = snapshot.val();
               if(data){
@@ -102,20 +71,46 @@ export default class MyOrderDetail extends Component {
                 console.log(this.state.arduinoWeight);
               }
          });
+
+
     }
 
+    timeOut =() =>{
+        if(true){
+            firestore.collection('IngredientList').get().then((snapshot) =>{
+                snapshot.forEach((childSnapshot) =>{
+                    var expiry = childSnapshot.data().expiry_Date;
+                    console.log("expotoken",expiry)
+                
+                    if(expiry == dateEnd){
+                        let dateEnd = new Date(Date.now() +  3 * 24 * 60 * 60 *1000)
+                        var dataDone = expiry - dateEnd;
+                        const trigger = dataDone;
+                        trigger.setMinutes(0);
+                        trigger.setSeconds(0);
+                        
+                        Notifications.scheduleNotificationAsync({
+                            content: {
+                                title: 'This Item Will Expired in 3 days',
+                            },
+                            trigger,
+                        })
+                    }                                    
+                })
+            })
+        }
+    }
 
     
-    setUniqueId = (value) => {
-        this.setState({ uniqueId: value });
-    }
 
+// utk update quantity
     inputValueUpdate = (val, prop) => {
         const state = this.state;
         state[prop] = val;
         this.setState(state);
       }
 
+      //update in firestore
       updateQuantity() {
         this.setState({
           isLoading: true,
@@ -139,6 +134,9 @@ export default class MyOrderDetail extends Component {
         });
       }
 
+
+      //for low quantity
+      //send to all users
       sendNotificationToAllUsers = async () => {
         const users = await firestore.collection('Users').get();
         users.docs.map((user) =>this.sendNotification(user.data().expoToken));
@@ -146,8 +144,8 @@ export default class MyOrderDetail extends Component {
     
     sendNotification = async()=>{
 
-console.log("send_notificaiton")
-console.log("uid", auth.currentUser.uid)
+    console.log("send_notificaiton")
+    console.log("uid", auth.currentUser.uid)
         try{
     
             if(true){
@@ -170,7 +168,7 @@ console.log("uid", auth.currentUser.uid)
                                 to: expotoken.data,
                                 sound: 'default',
                                 title: 'KitchenSense',
-                                body: 'This item'+ingredientname+'has been in Low Quantity.'
+                                body: 'This item'+' '+this.state.ingredientname+' '+'has been in Low Quantity.'
                             })
                         }).then((response)=>{
                             console.log(response)
@@ -183,6 +181,56 @@ console.log("uid", auth.currentUser.uid)
             console.log(error)
         }
       }
+
+    //for mentioning expiration of the date
+      sendNotificationAllUsers = async () => {
+        const users = await firestore.collection('Users').get();
+        users.docs.map((user) =>this.sendExpirationNotification(user.data().expoToken));
+    } 
+    
+    sendExpirationNotification = async()=>{
+
+    console.log("send_notificaiton")
+    console.log("uid", auth.currentUser.uid)
+        try{
+    
+            if(true){
+                firestore.collection('Users').get().then((snapshot) =>{
+                    snapshot.forEach((childSnapshot) =>{
+                        var expotoken = childSnapshot.data().push_token;
+                        console.log("expotoken",expotoken)
+                                              
+    
+                        fetch('https://exp.host/--/api/v2/push/send',
+                         {
+                            method: 'POST',
+                            headers: {
+                            Accept: 'application/json',
+                            'Accept-encoding': 'gzip, deflate',
+                            'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify
+                            ({
+                                to: expotoken.data,
+                                sound: 'default',
+                                title: 'KitchenSense',
+                                body: 'This Item Will Expired in 3 days'
+                            })
+                        }).then((response)=>{
+                            console.log(response)
+                        });
+                    })
+                })
+                
+            }
+        }catch(error){
+            console.log(error)
+        }
+      }
+    
+
+
+
     
     
       deleteUser() {
@@ -237,6 +285,15 @@ console.log("uid", auth.currentUser.uid)
                                 <Text>{this.state.expiry_Date}</Text>
                             </Body>
                     </Card>
+                    <Card>
+                        <CardItem>
+                            <View style={{flex: 1, flexDirection:'row'}}>
+                                <Text >Arduino Weight</Text>
+                                <Text style={{paddingStart:10}}>{this.state.arduinoWeight}</Text>
+
+                            </View>
+                        </CardItem>
+                    </Card>
 
                     <Card>
                         <CardItem bordered header>
@@ -254,17 +311,21 @@ console.log("uid", auth.currentUser.uid)
 
                     <Card style={{ height: 400 }}>
                         <CardItem header bordered>
-                            <Text style={{ fontWeight: "bold" }}>Quantity</Text>
-                        </CardItem>
-                        <CardItem cardBody style={{flexDirection:'column', padding: 10}}>
-                            <Body>
-                                <ListItem>
+                            <View style={{flexDirection:'row'}}>
+                            <Text style={{ fontWeight: "bold" }}>Quantity:</Text>
+                            <ListItem>
                                     <Text style={{ marginLeft: 30, marginTop: 25 }}>{this.state.quantity}</Text>
                                 </ListItem>
 
-                            </Body>
+                            </View>
+                        </CardItem>
+                        <CardItem cardBody style={{flexDirection:'column', padding: 10}}>
+                            
+
+                            
                         </CardItem>
                         <CardItem>
+                            <Text style={{padding:10}}>Input Data Here</Text>
                             <TextInput
                                     placeholder={'Quantity'}
                                     value={this.state.quantity}
@@ -296,11 +357,16 @@ console.log("uid", auth.currentUser.uid)
                                     <Button primary onPress={() => this.sendNotificationToAllUsers()} >
                                         <Text>Update</Text>
                                     </Button>
-                                    <Button danger iconRight /* onPress={this.openAlert} */>
-                                        <Text>Delete</Text>
-                                        <Icon name="md-trash-outline"/>
+                                   
+                    </View>
+                     </Card>
+                     <Card>
+                     <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
+                                    <Button danger onPress={() => this.sendNotificationAllUsers()} >
+                                        <Text>Expired</Text>
                                     </Button>
-                                </View>
+                                   
+                    </View>
                      </Card>
 
 
