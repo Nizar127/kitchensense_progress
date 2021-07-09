@@ -36,7 +36,8 @@ export default function Router() {
               );
             } else if (route.name === 'Profile'){
               <Ionicons
-                  name={'md-accessibility'}
+              
+                  name={'md-body'}
                   size={size}
                   color={color}
                 />

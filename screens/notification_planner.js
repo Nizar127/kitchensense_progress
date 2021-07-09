@@ -181,7 +181,7 @@ export default class NotificationPlanner extends Component {
                         console.log("[saveData] Done add to firebase", res);
                         
                     });
-                    Alert.alert('Your new planner has been posted', 'Please Choose',
+                    Alert.alert('Your new planner is Created', 'Please Choose',
                         [
                             {
                                 text: "Return To Main Screen",
@@ -189,7 +189,7 @@ export default class NotificationPlanner extends Component {
                             },
                             {
                                 text: "View Current Planner",
-                                onPress: () => this.props.navigation.navigate('Planner')
+                                onPress: () => this.props.navigation.navigate('DataPlanner')
                             },
                         ], { cancelable: false }
                     )

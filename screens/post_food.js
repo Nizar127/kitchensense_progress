@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import { TouchableHighlight, Switch, Animated, Layouts, View, StyleSheet, ScrollView, Image, TextInput, Alert, Toast, ActivityIndicator } from 'react-native';
 import {
@@ -126,11 +127,9 @@ export default class PostFood extends Component {
 /*     handleConfirm=(date)=>{
         this.setState({DateDisplay:date.toUTCString()})
     }
-
     onPressCancel = () => {
         this.setState({visibility:false})
     }
-
     onPressButtonClick = () => {
         this.setState({visibility:true})
     } */
@@ -459,9 +458,12 @@ export default class PostFood extends Component {
                         <Item>
                              <Label>Alert When Below (in gram)</Label>
                              <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setTheAlert} />
-                             <Text>{this.state.alert}</Text>
                             
                         </Item> 
+                        <Item>
+                        <Text>{this.state.alert}</Text>
+
+                        </Item>
                         <Item style={{marginTop: 30, marginBottom:10, marginLeft:2, marginRight:10}}  >  
                         </Item>  
 

@@ -204,7 +204,7 @@ console.disableYellowBox = true;
                             <Container>
                                 <Content>
                            
-                                <View style={{ height: 400,backgroundColor: '#242836', margin:5 }}>
+                                <View style={{ height: 350,backgroundColor: '#242836', margin:5 }}>
                                  
                                   <FlatList
                                         data={this.state.users}
@@ -237,7 +237,7 @@ console.disableYellowBox = true;
                                     />
                                  
                                 </View>
-                                <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
+                                <View style={{flex: 1, flexDirection:'row', margin:10, alignItems: 'center', justifyContent:'space-around'}}>
                                     <Button light onPress={() => this.props.navigation.navigate('Profile')}>
                                         <Text>Cancel</Text>
                                     </Button>

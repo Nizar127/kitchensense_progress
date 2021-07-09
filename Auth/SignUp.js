@@ -174,7 +174,7 @@ saveData = async() => {
   const {route} = this.props;
   if (this.state.description && route.params.userAddress && this.state.fullname && this.state.email && this.state.password  && this.state.phoneNum  && this.state.url) {
       if (this.state.password.length < 6){
-          Alert.alert('Status', 'Invalid Figure!');
+          Alert.alert('Status', 'Must be more than 6 characters!');
           
       }
       else {
@@ -199,7 +199,7 @@ saveData = async() => {
                       url: '',
         
                   });
-                  Alert.alert('Your Account Has Been Creatd', 'Please Choose',
+                  Alert.alert('Your Account Has Been Created', 'Please Choose',
                   [
                       {
                           text: "Thank You For Signin Up With Kitchen Sense. Please Sign In to proceed",
@@ -282,13 +282,9 @@ saveData = async() => {
                  <Label>Address</Label>
                  <View style={{margin: 10}}><Text>{route.params.userAddress}</Text></View> 
                </View>
- 
-                          
-                 
+
              </Item>
-             {/* <Button success style={{ marginTop: 10}} onPress={(address) => this.setDisplayCurrentAddress(address)}>
-                                     <Text>Check Location</Text>
-                                 </Button> */}
+
            </View>
 
 

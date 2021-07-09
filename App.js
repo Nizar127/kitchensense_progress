@@ -21,6 +21,7 @@ import Household from './screens/Household';
 import MyLocation from './location/location';
 import UserStartLocation from './location/userStartLocation';
 import AddUserLocation from './location/adduserlocation';
+import PostFoodLocation from './location/postFoodLocation';
 import PlanLocation from './location/PlanLocation';
 import AddPlaner from './screens/AddPlaner';
 import NotificationPlanner from './screens/notification_planner';
@@ -45,6 +46,7 @@ function App() {
         <Stack.Screen name="MyLocation" component={MyLocation}/>
         <Stack.Screen name="AddUserLocation" component={AddUserLocation}/>
         <Stack.Screen name="PlanLocation" component={PlanLocation}/>
+        <Stack.Screen name="PostFoodLocation" component={PostFoodLocation}/>
         <Stack.Screen name="AddPlaner" component={AddPlaner} />
         <Stack.Screen name="DataPlanner" component={DataPlanner} />
         <Stack.Screen name="NotificationPlanner" component={NotificationPlanner} />

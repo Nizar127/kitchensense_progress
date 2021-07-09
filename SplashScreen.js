@@ -37,7 +37,7 @@ const SplashScreen = ({ navigation }) => {
                 style={styles.footer}
                 animation="fadeInUpBig"
             >
-                <Text style={styles.title}>Welcome to Kitchen Sense</Text>
+                <Text style={styles.title}>Welcome to KitchenSense</Text>
                 <Text style={styles.text}>Sign in with account</Text>
                 <View style={styles.button}>
                     <TouchableOpacity onPress={() => navigation.push('MyLocation')}>
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'flex-end',
-        marginTop: 20
+        marginTop: 5
     },
     signIn: {
         width: 150,

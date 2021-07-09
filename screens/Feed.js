@@ -32,6 +32,7 @@ import * as Notifications from 'expo-notifications';
 
 
 
+
 export default class Home extends Component {
 
     constructor() {

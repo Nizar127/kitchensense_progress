@@ -132,7 +132,9 @@ export default class Profile extends Component {
                 <ScrollView>
                     <Card>
                     <CardItem header bordered >
-                            <View style={{ flex: 1, marginStart: 10, marginBottom: 40 }}>                 
+                            <View style={{ flex: 1, marginStart: 10, marginBottom: 40 }}>     
+                            <Icon ios='ios-menu' android="md-arrow-back" style={{fontSize: 24, marginTop:20, marginStart:10, marginEnd:30, color: 'black'}} onPress={() => this.props.navigation.navigate('Home')}/>
+            
                                 <Button success style={{ position: 'absolute', top: 2, right: 20, bottom: 10}} onPress={() => this.props.navigation.navigate('AddUserLocation')}>
                                     <Text>Manage Household User</Text>
                                 </Button>
@@ -174,7 +176,7 @@ export default class Profile extends Component {
 
                     <Card style={{ height: 200 }}>
                         <CardItem header bordered>
-                            <Text>About Us</Text>
+                            <Text>About Me</Text>
                         </CardItem>
                         <CardItem cardBody bordered button>
                             <Body>

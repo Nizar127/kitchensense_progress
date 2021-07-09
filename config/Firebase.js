@@ -2,6 +2,8 @@ import Firebase from 'firebase';
 
 let firebaseConfig = {
    
+
+
         apiKey: "",
         authDomain: "",
         projectId: "",
@@ -9,6 +11,7 @@ let firebaseConfig = {
         messagingSenderId: "",
         appId: "",
         measurementId: ""
+
       
 };
 // Initialize Firebase
