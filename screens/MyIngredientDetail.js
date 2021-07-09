@@ -168,7 +168,7 @@ export default class MyIngredientDetail extends Component {
                                 to: expotoken.data,
                                 sound: 'default',
                                 title: 'KitchenSense',
-                                body: 'This item'+' '+this.state.ingredientname+' '+'has been in Low Quantity.'
+                                body: 'This '+' '+this.state.ingredientname+' '+' in low quantity. Check your Smart Shelf now'
                             })
                         }).then((response)=>{
                             console.log(response)

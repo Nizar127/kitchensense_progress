@@ -190,7 +190,7 @@ export default function(props) {
                                 to: expotoken.data,
                                 sound: 'default',
                                 title: 'KitchenSense',
-                                body: 'You Have Been Chosen To Be The Planner '
+                                body: 'You are Chosen To Buy An Ingredient '
                             })
                         }).then((response)=>{
                             console.log(response)
@@ -496,6 +496,8 @@ export default function(props) {
         return (
             <Container>
                 <Content padder>
+                <Icon ios='ios-menu' android="md-arrow-back" style={{fontSize: 24, marginTop:20, marginStart:10, marginEnd:30, color: 'black'}} onPress={() => this.props.navigation.navigate('Home')}/>
+
                     <Text style={{ textAlign: "center", height: 40, fontWeight: "bold", marginTop: 20 }}>Details</Text>
                     <Form>
 

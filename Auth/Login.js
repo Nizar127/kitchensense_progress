@@ -84,31 +84,6 @@ loginUser = () => {
     }
 }
 
-callGraph = async token => {
-  /// Look at the fields... I don't have an `about` on my profile but everything else should get returned.
-  const response = await fetch(
-    `https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,about,picture`
-  );
-  const responseJSON = JSON.stringify(await response.json());
-  this.setState({ responseJSON });
-};
-
-async loginWithFacebook() {
-
-  //ENTER YOUR APP ID 
-  const { type, token } = await Facebook.logInWithReadPermissionsAsync('<>', { permissions: ['public_profile'] })
-
-  if (type == 'success') {
-
-    this.callGraph(token);
-
-    const credential = firebase.auth.FacebookAuthProvider.credential(token)
-
-    auth.signInWithCredential(credential).catch((error) => {
-      console.log(error)
-    })
-  }
-}
 
 registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Permissions.getAsync(
@@ -192,7 +167,7 @@ registerForPushNotificationsAsync = async () => {
               full
               rounded
               primary
-              onPress={() => this.props.navigation.navigate('SignUp')}    /* this.signUpUser() */
+              onPress={() => this.props.navigation.navigate('SplashScreen')}    /* this.signUpUser() */
           >
               <Text style={{ color: 'white' }}> Sign Up</Text>
           </Button>
