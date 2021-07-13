@@ -37,7 +37,7 @@ export default function Router() {
             } else if (route.name === 'Profile'){
               <Ionicons
               
-                  name={'md-body'}
+                  name={'ios-person-outline'}
                   size={size}
                   color={color}
                 />

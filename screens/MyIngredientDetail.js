@@ -233,11 +233,11 @@ export default class MyIngredientDetail extends Component {
 
     
     
-      deleteUser() {
+      deleteIngredient() {
         const deleteRef = firestore.collection('IngredientList').doc(this.props.route.params.userkey)
           deleteRef.delete().then((res) => {
               console.log('Item removed from database')
-              this.props.navigation.navigate('MyOrderDetail');
+              this.props.navigation.navigate('MyIngredientDetail');
           })
       }
     
@@ -246,7 +246,7 @@ export default class MyIngredientDetail extends Component {
           'Delete Item',
           'Are you sure?',
           [
-            {text: 'Yes', onPress: () => this.deleteUser()},
+            {text: 'Yes', onPress: () => this.deleteIngredient()},
             {text: 'No', onPress: () => console.log('No item was removed'), style: 'cancel'},
           ],
           { 
@@ -362,8 +362,16 @@ export default class MyIngredientDetail extends Component {
                      </Card>
                      <Card>
                      <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
-                                    <Button danger onPress={() => this.sendNotificationAllUsers()} >
+                                    <Button warning onPress={() => this.sendNotificationAllUsers()} >
                                         <Text>Expired</Text>
+                                    </Button>
+                                   
+                    </View>
+                     </Card>
+                     <Card>
+                     <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
+                                    <Button danger onPress={this.openAlert} >
+                                        <Text>Delete This Item</Text>
                                     </Button>
                                    
                     </View>

@@ -75,7 +75,7 @@ export default class NotificationPlanner extends Component {
     componentDidMount() {
          //.where('people_InCharge', '==', auth.currentUser.uid)
         //above is the code originally used to only called to particular people
-        this.notifyRef = firestore.collection('Notifications_Planner')/* .where('people_inChargeID', '==', auth.currentUser.uid) */ //* .where('people_inChargeID' == auth.currentUser.uid) */;
+        this.notifyRef = firestore.collection('Notifications_Planner').where('people_inChargeID', '==', auth.currentUser.uid); //* .where('people_inChargeID' == auth.currentUser.uid) */;
         this.unsubscribe = this.notifyRef.onSnapshot(this.getCollection);
         this.plannerRef = firestore.collection('Planner');
 

@@ -187,7 +187,7 @@ export default class Home extends Component {
                         <Icon name="ios-add-circle-outline" style={{ color: '#ffffff', fontSize: 30}} />
                       </Button>
                       <Button style={{ width:60, height: 50, backgroundColor: '#3B5998', marginBottom: 30, marginEnd: 30}} onPress={() => this.props.navigation.navigate('PlanLocation')}>
-                        <Icon name="person-add" style={{ color: '#ffffff', fontSize: 30}}/>
+                        <Icon name="file-copy" style={{ color: '#ffffff', fontSize: 30}}/>
                       </Button>
                     
                 </Fab>
