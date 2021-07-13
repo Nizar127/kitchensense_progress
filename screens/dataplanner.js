@@ -140,6 +140,12 @@ export default class DataPlanner extends Component {
                                                 <CardItem header bordered style={{ flexDirection: 'row' }}>
                                                     <Text>{item.name_item}</Text>
                                                 </CardItem>
+                                                <CardItem header bordered style={{ flexDirection: 'row' }}>
+                                                    <View style={{ flexDirection: 'row', padding: 10}}>
+                                                        <Text>Person In Charge: </Text>
+                                                        <Text>{item.people_InCharge}</Text>
+                                                    </View>
+                                                </CardItem>
                                                 <CardItem>
                                                     <Image style={{flex:1, height:200}} source={{uri: item.pic}}/>
                                                 </CardItem>
