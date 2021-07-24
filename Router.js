@@ -34,13 +34,14 @@ export default function Router() {
                   color={color}
                 />
               );
-            } else if (route.name === 'Profile'){
-              <Ionicons
-              
-                  name={'ios-person-outline'}
+            }  else if (route.name === 'Profile') {
+              return (
+                <Ionicons
+                  name={'md-person'}
                   size={size}
                   color={color}
                 />
+              );
             } 
           },
         })}
