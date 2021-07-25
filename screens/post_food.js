@@ -345,7 +345,7 @@ export default class PostFood extends Component {
 
                         
                     }).then((res) => {
-                        console.log("[saveData] Done add to firebase", res);
+                        console.log("[postfood] Done add to firebase");
 
                         this.setState({
                             ingredientname: '',

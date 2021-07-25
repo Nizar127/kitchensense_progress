@@ -75,32 +75,6 @@ export default class MyIngredientDetail extends Component {
 
     }
 
-    timeOut =() =>{
-        if(true){
-            firestore.collection('IngredientList').get().then((snapshot) =>{
-                snapshot.forEach((childSnapshot) =>{
-                    var expiry = childSnapshot.data().expiry_Date;
-                    console.log("expotoken",expiry)
-                
-                    if(expiry == dateEnd){
-                        let dateEnd = new Date(Date.now() +  3 * 24 * 60 * 60 *1000)
-                        var dataDone = expiry - dateEnd;
-                        const trigger = dataDone;
-                        trigger.setMinutes(0);
-                        trigger.setSeconds(0);
-                        
-                        Notifications.scheduleNotificationAsync({
-                            content: {
-                                title: 'This Item Will Expired in 3 days',
-                            },
-                            trigger,
-                        })
-                    }                                    
-                })
-            })
-        }
-    }
-
     
 
 // utk update quantity
@@ -139,7 +113,7 @@ export default class MyIngredientDetail extends Component {
       //send to all users
       sendNotificationToAllUsers = async () => {
         const users = await firestore.collection('Users').get();
-        users.docs.map((user) =>this.sendNotification(user.data().expoToken));
+        users.docs.map((user) =>this.sendNotification(user.data().push_token));
     } 
     
     sendNotification = async()=>{
@@ -148,7 +122,7 @@ export default class MyIngredientDetail extends Component {
     console.log("uid", auth.currentUser.uid)
         try{
     
-            if(true){
+            if(this.state.quantity >= this.state.alert){
                 firestore.collection('Users').get().then((snapshot) =>{
                     snapshot.forEach((childSnapshot) =>{
                         var expotoken = childSnapshot.data().push_token;
@@ -185,7 +159,7 @@ export default class MyIngredientDetail extends Component {
     //for mentioning expiration of the date
       sendNotificationAllUsers = async () => {
         const users = await firestore.collection('Users').get();
-        users.docs.map((user) =>this.sendExpirationNotification(user.data().expoToken));
+        users.docs.map((user) =>this.sendExpirationNotification(user.data().push_token));
     } 
     
     sendExpirationNotification = async()=>{
@@ -214,7 +188,7 @@ export default class MyIngredientDetail extends Component {
                                 to: expotoken.data,
                                 sound: 'default',
                                 title: 'KitchenSense',
-                                body: 'This Item Will Expired in 3 days'
+                                body: 'This Item Has Expired'
                             })
                         }).then((response)=>{
                             console.log(response)
@@ -363,7 +337,7 @@ export default class MyIngredientDetail extends Component {
                      <Card>
                      <View style={{flex: 1, flexDirection:'row', margin: 10, alignItems: 'center', justifyContent:'space-around'}}>
                                     <Button warning onPress={() => this.sendNotificationAllUsers()} >
-                                        <Text>Expired</Text>
+                                        <Text>Check Expiration Date</Text>
                                     </Button>
                                    
                     </View>

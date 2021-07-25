@@ -50,6 +50,7 @@ export default function(props) {
         this.state = {
             currentUser: null,
             userID: null,
+            users:'',
             username:'',
             itemname: '',
             email:'',
@@ -121,6 +122,12 @@ export default function(props) {
     
     }
 
+    testuser=()=>{
+        let users = firestore.collection('Users').doc(this.state.People).get();
+       // users.docs.map((user) =>this.sendNotification(user.data().expoToken));
+        console.log("test users ",users)
+        }
+
     componentWillUnmount(){
         this.unsubscribe();
     }
@@ -158,11 +165,28 @@ export default function(props) {
 
 
 
-      //send to all users
-      sendNotificationToAllUsers = async () => {
-        const users = await firestore.collection('Users').get();
-        users.docs.map((user) =>this.sendNotification(user.data().expoToken));
-    } 
+
+    onUserSelected(value) {
+        this.setState({
+          People: value
+        });
+        console.log('value_people', value)
+      }
+
+
+    handleConfirm=(date)=>{
+        this.setState({DateDisplay:date.toUTCString()})
+    }
+
+    onPressCancel = () => {
+        this.setState({visibility:false})
+    }
+
+    onPressButtonClick = () => {
+        this.setState({visibility:true})
+    }
+
+
     
     sendNotification = async()=>{
 
@@ -174,6 +198,8 @@ export default function(props) {
                 firestore.collection('Users').get().then((snapshot) =>{
                     snapshot.forEach((childSnapshot) =>{
                         var expotoken = childSnapshot.data().push_token;
+                        //var specific = this.state.People;
+                        //console.log("specific", specific)
                         console.log("expotoken",expotoken)
                                               
     
@@ -204,63 +230,16 @@ export default function(props) {
         }
       }
     
-/*     onMetricSelected(value) {
-        this.setState({
-          selectedMetric: value
-        });
-      } */
-
-    onUserSelected(value) {
-        this.setState({
-          People: value
-        });
-        console.log('value_people', value)
-      }
-
-
-    handleConfirm=(date)=>{
-        this.setState({DateDisplay:date.toUTCString()})
-    }
-
-    onPressCancel = () => {
-        this.setState({visibility:false})
-    }
-
-    onPressButtonClick = () => {
-        this.setState({visibility:true})
-    }
-
-
- 
-    toggleView = () => {
-        Animated.timing(this.mode, {
-            toValue: this.mode._value === 0 ? 1 : 0,
-            duration: 300
-        }).start();
-    };
-
-
-//initial plan to send information to users
-/* NotiItem = () =>{
-    return (
-        <View>
-            <Card>
-                <CardBody style={{padding:10}}>
-                    <Text style={{marginBottom:10}}>Item: {this.state.itemname}</Text>
-                    <Text>You Have Been Suggested To Buy Ingredient</Text>
-                    <Text>Check Out The Planner</Text>
-                </CardBody>
-                <CardItem>
-                    <View style={{flex: 1, flexDirection:'row'}}>
-                        <Button success><Text>Accept</Text></Button>
-                        <Button danger><Text>Reject</Text></Button>
-                    </View>
-                </CardItem>
-            </Card>
-        </View>
-    )
-} */
-
+            //send to all users
+            sendNotificationToUsers = async () => {
+                console.log("send_this_notifications")
+        
+                const users = await firestore.collection('Users').doc(this.state.People).get();
+                //send to this particular user
+                console.log("testing notification", users.data())
+                this.sendNotification(users.data().push_token)       
+                console.log("send notification", users.data())
+            } 
 
     HireWorking = async() =>{
         //console.log("text_id", id);
@@ -296,32 +275,37 @@ export default function(props) {
                         itemname: this.state.itemname,
                         itemDesc: this.state.desc,
                         date_to_buy: this.state.DateDisplay,
-                        people_inCharge: this.state.People,
                         people_inChargeID: this.state.People,
                         url: this.state.url,
-                        //createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     }).then((res) => {
-                        console.log("[saveData] Done add to firebase", res);
+                        console.log("[saveData] Done add to firebase");
 
                         this.setState({
-                            itemname,
-                            itemDesc,
-                            date_to_buy,
-                            people_inCharge,
-                            url 
+                            itemname:'',
+                            itemDesc:'',
+                            date_to_buy:'',
+                            people_inCharge:'',
+                            url:'' 
                         })
+
+                        //send notifications to particular user
+
+
+                        this.sendNotificationToUsers().then(() => {
+                            console.log("send done"); 
+                           });
+
                     });
-                    //console.log("timestamp",timestamp)
-                      //send noti to user   
-                    Alert.alert('Your Job Has Been Posted', 'Please Choose',
+
+                    Alert.alert('Your Planner Has Been Posted', 'Please Choose',
                         [
                             {
                                 text: "Return To Main Screen",
                                 onPress: () => this.props.navigation.navigate('Home')
                             },
                             {
-                                text: "View Current Job Posted",
-                                onPress: () => this.props.navigation.navigate('Profile'),
+                                text: "View Current Planner",
+                                onPress: () => this.props.navigation.navigate('DataPlanner'),
                             }
                         ], { cancelable: false }
                     )
@@ -333,6 +317,7 @@ export default function(props) {
         });
 
     }
+
 
 
     setUserID = (value) => {
@@ -564,13 +549,7 @@ export default function(props) {
                                     placeholder='Select User'
                                     headerBackButtonText='Geri'
                                     selectedValue={this.state.buyPeople}
-                                  /*   onValueChange ={(itemValue, itemIndex) =>  
-                                     {
-                                         return(
-                                            <Picker.Item label={itemValue.fullname} value={itemValue.fullname} key={itemIndex} />
-
-                                         )
-                                     }} */
+                
                                     onValueChange={(value) => this.onUserSelected(value)}
                                     >
                                   {this.state.buyPeople.map((buyPeople, i) => {
@@ -595,9 +574,7 @@ export default function(props) {
                         <Text style={{ fontWeight: "bold" }}>Done</Text>
                     </Button>
 
-                    <Button block primary last style={{ marginTop: 50 }} onPress={() => this.sendNotificationToAllUsers()} >
-                        <Text style={{ fontWeight: "bold" }}>Send Notification To All</Text>
-                    </Button>
+                    
 
                 </Content>
 
