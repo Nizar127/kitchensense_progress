@@ -113,7 +113,7 @@ export default class MyIngredientDetail extends Component {
       //send to all users
       sendNotificationToAllUsers = async () => {
         const users = await firestore.collection('Users').get();
-        users.docs.map((user) =>this.sendNotification(user.data().expoToken));
+        users.docs.map((user) =>this.sendNotification(user.data().push_token));
     } 
     
     sendNotification = async()=>{
@@ -159,7 +159,7 @@ export default class MyIngredientDetail extends Component {
     //for mentioning expiration of the date
       sendNotificationAllUsers = async () => {
         const users = await firestore.collection('Users').get();
-        users.docs.map((user) =>this.sendExpirationNotification(user.data().expoToken));
+        users.docs.map((user) =>this.sendExpirationNotification(user.data().push_token));
     } 
     
     sendExpirationNotification = async()=>{

@@ -186,14 +186,7 @@ export default function(props) {
         this.setState({visibility:true})
     }
 
-      //send to all users
-      sendNotificationToUsers = async () => {
-        const users = await firestore.collection('Users').doc(this.state.People).get();
-        //send to this particular user
-        console.log("testing notification", users.data())
-        sendNotification(users.data().expoToken)       
-        console.log("send notification", users.data())
-    } 
+
     
     sendNotification = async()=>{
 
@@ -237,6 +230,16 @@ export default function(props) {
         }
       }
     
+            //send to all users
+            sendNotificationToUsers = async () => {
+                console.log("send_this_notifications")
+        
+                const users = await firestore.collection('Users').doc(this.state.People).get();
+                //send to this particular user
+                console.log("testing notification", users.data())
+                this.sendNotification(users.data().push_token)       
+                console.log("send notification", users.data())
+            } 
 
     HireWorking = async() =>{
         //console.log("text_id", id);
@@ -275,17 +278,22 @@ export default function(props) {
                         people_inChargeID: this.state.People,
                         url: this.state.url,
                     }).then((res) => {
-                        console.log("[saveData] Done add to firebase", res);
+                        console.log("[saveData] Done add to firebase");
 
                         this.setState({
-                            itemname,
-                            itemDesc,
-                            date_to_buy,
-                            people_inCharge,
-                            url 
+                            itemname:'',
+                            itemDesc:'',
+                            date_to_buy:'',
+                            people_inCharge:'',
+                            url:'' 
                         })
-                        
-                        this.sendNotificationToUsers().then(() => { console.log("send done"); });
+
+                        //send notifications to particular user
+
+
+                        this.sendNotificationToUsers().then(() => {
+                            console.log("send done"); 
+                           });
 
                     });
 
@@ -563,10 +571,6 @@ export default function(props) {
 
 
                     <Button block success last style={{ marginTop: 50 }} onPress={this.HireWorking.bind(this)}>
-                        <Text style={{ fontWeight: "bold" }}>Done</Text>
-                    </Button>
-                        
-                    <Button block danger last style={{ marginTop: 50 }} onPress={() => this.sendNotificationToUsers()}>
                         <Text style={{ fontWeight: "bold" }}>Done</Text>
                     </Button>
 
