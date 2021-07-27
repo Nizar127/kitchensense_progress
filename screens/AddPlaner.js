@@ -142,7 +142,7 @@ export default function(props) {
                 address,
                 description,
                 url,
-                phoneNum,
+                //phoneNum,
             } = res.data();
             buyPeople.push({
                 key: res.id,
@@ -153,7 +153,7 @@ export default function(props) {
                 address,
                 description,
                 url,
-                phoneNum,
+                //phoneNum,
             });
         });
         this.setState({
@@ -252,7 +252,7 @@ export default function(props) {
                 userEmail: doc.get('email'),
                 userPicture: doc.get('url'),
                 userDescription: doc.get('description'),
-                userPhoneNum: doc.get('phoneNum')
+                //userPhoneNum: doc.get('phoneNum')
             }, () => {
 
                 console.log("state", this.state)
@@ -261,7 +261,7 @@ export default function(props) {
                 console.log("userPicture", this.state.userPicture)
                 console.log("initialID", this.state.thisuserid)
                 console.log("userDescription", this.state.userDescription)
-                console.log("userPhoneNum",this.state.userPhoneNum)
+                //console.log("userPhoneNum",this.state.userPhoneNum)
                 console.log("orderedEmail", this.state.userEmail)
 
                 if (this.state.userID &&  this.state.desc &&this.state.itemname && this.state.DateDisplay && this.state.People && this.state.url) {
@@ -271,7 +271,7 @@ export default function(props) {
                         userPicture: this.state.userPicture,
                         orderedEmail: this.state.userEmail,
                         orderDescription: this.state.userDescription,
-                        orderManPhoneNum: this.state.userPhoneNum,
+                        //orderManPhoneNum: this.state.userPhoneNum,
                         itemname: this.state.itemname,
                         itemDesc: this.state.desc,
                         date_to_buy: this.state.DateDisplay,

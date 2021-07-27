@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './screens/Feed';
 import { Ionicons } from '@expo/vector-icons';
 import Profile from './screens/profile';
-import Planner from './screens/Planner';
+import Planner from './screens/planner';
 
 
 

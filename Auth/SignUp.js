@@ -27,7 +27,7 @@ export default function(props) {
             email: '',
             password: '',
             fullname:'',
-            phoneNum:'',
+            //phoneNum:'',
             employee: false,
             address: '',
             url: null,
@@ -156,9 +156,9 @@ setFullName = (value) => {
     this.setState({ fullname: value })
 }
 
-setPhoneNum = (value) => {
+/* setPhoneNum = (value) => {
     this.setState({ phoneNum: value })
-}
+} */
 
 setDescription = (value) => {
     this.setState({ description: value })
@@ -172,7 +172,7 @@ setAddress = (value) => {
 saveData = async() => {
   console.log("state", this.state)
   const {route} = this.props;
-  if (this.state.description && route.params.userAddress && this.state.fullname && this.state.email && this.state.password  && this.state.phoneNum  && this.state.url) {
+  if (this.state.description && route.params.userAddress && this.state.fullname && this.state.email && this.state.password && this.state.url) {
       if (this.state.password.length < 6){
           Alert.alert('Status', 'Must be more than 6 characters!');
           
@@ -185,7 +185,6 @@ saveData = async() => {
                   fullname: this.state.fullname,
                   description: this.state.description,
                   address: route.params.userAddress,
-                  phoneNum: this.state.phoneNum,
                   url: this.state.url,
                   //created: firebase.firestore.FieldValue.serverTimestamp()
               }).then((res) => {
@@ -195,7 +194,6 @@ saveData = async() => {
                       password:'',
                       address: '',
                       description:'',
-                      phoneNum:'',
                       url: '',
         
                   });
@@ -287,12 +285,6 @@ saveData = async() => {
 
            </View>
 
-
-
-           <Item style={styles.inputGroup} fixedLabel last>
-               <Label>Phone Number</Label>
-                 <Input keyboardType="numeric" style={styles.startRouteBtn} onChangeText={this.setPhoneNum} />
-            </Item>
 
 
           <Button full rounded success last style={{ marginTop: 50 }} onPress={this.saveData.bind(this)}>
