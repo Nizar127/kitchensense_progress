@@ -44,7 +44,7 @@ export default class DataPlanner extends Component {
             itemname: '',
             itemDesc: '',
             orderDescription:'', 
-            orderManPhoneNum: '',
+            //orderManPhoneNum: '',
             orderedEmail: '',
             orderedMan: '',
             orderedid: '',
@@ -81,7 +81,7 @@ export default class DataPlanner extends Component {
                 PersonId,
                 PersonName,
                 PersonPicture,
-                PersonPhoneNum,
+                //PersonPhoneNum,
                 pic,
                 people_InCharge,
             } = res.data();
@@ -96,7 +96,7 @@ export default class DataPlanner extends Component {
                 PersonId,
                 PersonName,
                 PersonPicture,
-                PersonPhoneNum,
+                //PersonPhoneNum,
                 pic,
                 people_InCharge,
             });

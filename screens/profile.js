@@ -42,7 +42,7 @@ export default class Profile extends Component {
             fullname: '',
             email: '',
             key: '',
-            phoneNum:'',
+            //phoneNum:'',
             description: '',
             profileImage: '',
             keyplayer: '',
@@ -70,12 +70,12 @@ export default class Profile extends Component {
     componentDidMount() {
         this.unsubscribe = firestore.collection('Users').doc(auth.currentUser.uid).onSnapshot(doc => {
             console.log(doc);
-            const { email, fullname, phoneNum, url, address, description, skills} = doc.data();
+            const { email, fullname,  url, address, description, skills} = doc.data();
             this.setState({
                 email,
                 fullname,
                 description,
-                phoneNum,
+                //phoneNum,
                 url,
                 address,
             })
@@ -186,7 +186,7 @@ export default class Profile extends Component {
                         </CardItem>
                     </Card>
 
-                    <Card style={{ height: 200 }}>
+{/*                     <Card style={{ height: 200 }}>
                         <CardItem header bordered>
                             <Text>Phone Number</Text>
                         </CardItem>
@@ -196,7 +196,7 @@ export default class Profile extends Component {
 
                             </Body>
                         </CardItem>
-                    </Card>
+                    </Card> */}
 
                     <Card style={{ height: 200 }}>
                         <CardItem header bordered>

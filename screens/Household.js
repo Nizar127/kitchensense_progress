@@ -47,7 +47,7 @@ console.disableYellowBox = true;
             fullname: '',
             email: '',
             key: '',
-            phoneNum:'',
+            //phoneNum:'',
             description: '',
             profileImage: '',
             keyplayer: '',
@@ -93,7 +93,7 @@ console.disableYellowBox = true;
                 address,
                 description,
                 url,
-                phoneNum,
+                //phoneNum,
             } = res.data();
             users.push({
                 key: res.id,
@@ -104,7 +104,7 @@ console.disableYellowBox = true;
                 address,
                 description,
                 url,
-                phoneNum,
+                //phoneNum,
             });
         });
         this.setState({

@@ -12,7 +12,6 @@ let firebaseConfig = {
         appId: "",
         measurementId: "" 
 
-
       
 };
 // Initialize Firebase
