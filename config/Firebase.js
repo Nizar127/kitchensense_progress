@@ -8,7 +8,7 @@ let firebaseConfig = {
     projectId: "kitchensense-97a6a",
     storageBucket: "kitchensense-97a6a.appspot.com",
     messagingSenderId: "964810785738",
-    appId: "1:964810785738:web:80ec43976c5893adf74533"
+    appId: "1:964810785738:web:80ec43976c5893adf74533" 
 
 /*         apiKey: "",
         authDomain: "",
